@@ -1,25 +1,33 @@
 package com.je_martinez.demo.controllers
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.je_martinez.demo.controllers.TodoController.TodoResponse
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
+import com.je_martinez.demo.exceptions.TodoExceptions
 import com.je_martinez.demo.validators.HexString
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import org.bson.types.ObjectId
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
-@Validated
+//@Validated
 @RestController
 @RequestMapping("/api/todos")
 class TodoController (private val repository: TodoRepository) {
 
-    data class TodoRequest(
+    data class TodoRequest @JsonCreator constructor(
+        @field:NotBlank(message = "Title can't be blank.")
+        @field:Min(value = 5, message = "Tile must be at least 5 characters long")
+        @JsonProperty("title")
         val title: String,
+        @JsonProperty("description")
         val description: String,
     )
 
@@ -45,13 +53,13 @@ class TodoController (private val repository: TodoRepository) {
     fun getById(
         @PathVariable @HexString id: String
     ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{ NotFoundException() }
+        val todo = repository.findById(ObjectId(id)).orElseThrow{ TodoExceptions.notFoundException(id) }
         return todo.toResponse()
     }
 
     @PostMapping
     fun create(
-        @RequestBody body: TodoRequest
+        @Valid @RequestBody body: TodoRequest
     ):TodoResponse{
         val todo = repository.save(
             Todo(
@@ -59,7 +67,7 @@ class TodoController (private val repository: TodoRepository) {
                 description = body.description
             )
         )
-        return todo.toResponse();
+        return todo.toResponse()
     }
 
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
@@ -67,12 +75,12 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
-            throw NotFoundException()
+            TodoExceptions.notFoundException(id)
         }
 
         val updatedTodo = repository.save(
             todo.copy(completed = false, completedAt = null)
-        );
+        )
 
         return updatedTodo.toResponse()
     }
@@ -82,12 +90,12 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
-            throw NotFoundException()
+            TodoExceptions.notFoundException(id)
         }
 
         val updatedTodo = repository.save(
             todo.copy(completed = true, completedAt = Instant.now())
-        );
+        )
 
         return updatedTodo.toResponse()
     }
@@ -98,13 +106,13 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ) {
         val todo = repository.findById(ObjectId(id)).orElseThrow {
-            throw NotFoundException()
+            TodoExceptions.notFoundException(id)
         }
         repository.delete(todo)
     }
 }
 
-fun Todo.toResponse(): TodoController.TodoResponse {
+fun Todo.toResponse(): TodoResponse {
     return TodoResponse(
         id = this.id.toHexString(),
         title = this.title,
@@ -112,5 +120,5 @@ fun Todo.toResponse(): TodoController.TodoResponse {
         createdAt = this.createdAt,
         completedAt = this.completedAt,
         completed = this.completed,
-    );
+    )
 }
