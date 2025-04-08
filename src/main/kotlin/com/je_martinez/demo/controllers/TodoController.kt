@@ -3,12 +3,17 @@ package com.je_martinez.demo.controllers
 import com.je_martinez.demo.controllers.TodoController.TodoResponse
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
+import com.je_martinez.demo.validators.HexString
+import jakarta.validation.Valid
 import org.bson.types.ObjectId
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
+@Validated
 @RestController
 @RequestMapping("/api/todos")
 class TodoController (private val repository: TodoRepository) {
@@ -38,11 +43,9 @@ class TodoController (private val repository: TodoRepository) {
 
     @GetMapping(path = ["/{id}"])
     fun getById(
-        @PathVariable("id") id: String
+        @PathVariable @HexString id: String
     ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{
-            throw NotFoundException()
-        }
+        val todo = repository.findById(ObjectId(id)).orElseThrow{ NotFoundException() }
         return todo.toResponse()
     }
 
@@ -61,7 +64,7 @@ class TodoController (private val repository: TodoRepository) {
 
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
     fun markAsUncompleted(
-        @PathVariable("id") id: String
+        @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
             throw NotFoundException()
@@ -76,7 +79,7 @@ class TodoController (private val repository: TodoRepository) {
 
     @PatchMapping(path = ["/mark-as-completed/{id}"])
     fun markAsCompleted(
-        @PathVariable("id") id: String
+        @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
             throw NotFoundException()
@@ -92,7 +95,7 @@ class TodoController (private val repository: TodoRepository) {
     @DeleteMapping(path = ["/{id}"])
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun delete(
-        @PathVariable("id") id: String
+        @PathVariable @HexString id: String
     ) {
         val todo = repository.findById(ObjectId(id)).orElseThrow {
             throw NotFoundException()

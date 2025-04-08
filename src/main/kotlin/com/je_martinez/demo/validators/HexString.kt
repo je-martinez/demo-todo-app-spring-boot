@@ -1,0 +1,24 @@
+package com.je_martinez.demo.validators
+
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
+import kotlin.reflect.KClass
+
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+@Constraint(validatedBy = [HexStringValidator::class])
+annotation class HexString(
+    val message: String = "Invalid path variable value. Needs to be an Hex String of 24 characters.",
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
+)
+
+class HexStringValidator : ConstraintValidator<HexString, String> {
+    override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
+        if (value == null) return false
+        return value.matches(Regex("^[a-fA-F0-9]{24}$"))
+    }
+}
