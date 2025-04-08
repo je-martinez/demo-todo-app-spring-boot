@@ -3,10 +3,10 @@ package com.je_martinez.demo.controllers
 import com.je_martinez.demo.controllers.TodoController.TodoResponse
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.bson.types.ObjectId
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 @RestController
@@ -27,6 +27,25 @@ class TodoController (private val repository: TodoRepository) {
         val completed: Boolean
     )
 
+    @GetMapping
+    fun getAll(
+    ):List<TodoResponse>{
+        val todos = repository.findAll()
+        return todos.map {
+            it.toResponse()
+        }
+    }
+
+    @GetMapping(path = ["/{id}"])
+    fun getById(
+        @PathVariable("id") id: String
+    ):TodoResponse{
+        val todo = repository.findById(ObjectId(id)).orElseThrow{
+            throw NotFoundException()
+        }
+        return todo.toResponse()
+    }
+
     @PostMapping
     fun create(
         @RequestBody body: TodoRequest
@@ -38,6 +57,47 @@ class TodoController (private val repository: TodoRepository) {
             )
         )
         return todo.toResponse();
+    }
+
+    @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
+    fun markAsUncompleted(
+        @PathVariable("id") id: String
+    ):TodoResponse{
+        val todo = repository.findById(ObjectId(id)).orElseThrow{
+            throw NotFoundException()
+        }
+
+        val updatedTodo = repository.save(
+            todo.copy(completed = false, completedAt = null)
+        );
+
+        return updatedTodo.toResponse()
+    }
+
+    @PatchMapping(path = ["/mark-as-completed/{id}"])
+    fun markAsCompleted(
+        @PathVariable("id") id: String
+    ):TodoResponse{
+        val todo = repository.findById(ObjectId(id)).orElseThrow{
+            throw NotFoundException()
+        }
+
+        val updatedTodo = repository.save(
+            todo.copy(completed = true, completedAt = Instant.now())
+        );
+
+        return updatedTodo.toResponse()
+    }
+
+    @DeleteMapping(path = ["/{id}"])
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    fun delete(
+        @PathVariable("id") id: String
+    ) {
+        val todo = repository.findById(ObjectId(id)).orElseThrow {
+            throw NotFoundException()
+        }
+        repository.delete(todo)
     }
 }
 
