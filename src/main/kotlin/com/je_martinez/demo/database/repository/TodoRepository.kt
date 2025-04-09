@@ -5,4 +5,5 @@ import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface TodoRepository: MongoRepository<Todo, ObjectId> {
+    fun findTodosByOwnerId(ownerId: ObjectId): MutableList<Todo>
 }

@@ -5,8 +5,7 @@ import org.springframework.web.server.ResponseStatusException
 
 class TodoExceptions {
     companion object{
-        fun notFoundException (id:String): ResponseStatusException {
-            return ResponseStatusException(HttpStatus.NOT_FOUND, "Todo with $id not found")
-        }
+        fun notFound (id:String): ResponseStatusException = ResponseStatusException(HttpStatus.NOT_FOUND, "Todo with $id not found")
+        fun forbidden(): ResponseStatusException = ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have access to this resource")
     }
 }

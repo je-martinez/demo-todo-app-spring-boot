@@ -9,6 +9,7 @@ import java.time.Instant
 data class Todo(
     val title: String = "",
     val description: String = "",
+    val ownerId: ObjectId,
     val createdAt: Instant = Instant.now(),
     val completedAt: Instant? = null,
     val completed: Boolean = false,

@@ -6,13 +6,14 @@ import com.je_martinez.demo.controllers.TodoController.TodoResponse
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.exceptions.TodoExceptions
+import com.je_martinez.demo.security.current_user.CurrentUserId
 import com.je_martinez.demo.validators.HexString
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -20,11 +21,12 @@ import java.time.Instant
 @Validated
 @RestController
 @RequestMapping("/api/todos")
+@EnableMethodSecurity
 class TodoController (private val repository: TodoRepository) {
 
     data class TodoRequest @JsonCreator constructor(
         @field:NotBlank(message = "Title can't be blank.")
-        @field:Min(value = 5, message = "Tile must be at least 5 characters long")
+        //@field:Min(value = 5, message = "Tile must be at least 5 characters long")
         @JsonProperty("title")
         val title: String,
         @JsonProperty("description")
@@ -34,6 +36,7 @@ class TodoController (private val repository: TodoRepository) {
     data class TodoResponse(
         val id: String,
         val title: String,
+        val ownerId: String,
         val description: String,
         val createdAt: Instant,
         val completedAt: Instant?,
@@ -49,22 +52,26 @@ class TodoController (private val repository: TodoRepository) {
         }
     }
 
+    @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     @GetMapping(path = ["/{id}"])
     fun getById(
-        @PathVariable @HexString id: String
+        @PathVariable @HexString id: String,
+        @CurrentUserId userId: ObjectId
     ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{ TodoExceptions.notFoundException(id) }
+        val todo = repository.findById(ObjectId(id)).orElseThrow{ TodoExceptions.notFound(id) }
         return todo.toResponse()
     }
 
     @PostMapping
     fun create(
-        @Valid @RequestBody body: TodoRequest
+        @Valid @RequestBody body: TodoRequest,
+        @CurrentUserId userId: ObjectId
     ):TodoResponse{
         val todo = repository.save(
             Todo(
                 title = body.title,
-                description = body.description
+                description = body.description,
+                ownerId = userId,
             )
         )
         return todo.toResponse()
@@ -75,7 +82,7 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
-            TodoExceptions.notFoundException(id)
+            TodoExceptions.notFound(id)
         }
 
         val updatedTodo = repository.save(
@@ -90,7 +97,7 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
-            TodoExceptions.notFoundException(id)
+            TodoExceptions.notFound(id)
         }
 
         val updatedTodo = repository.save(
@@ -106,7 +113,7 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String
     ) {
         val todo = repository.findById(ObjectId(id)).orElseThrow {
-            TodoExceptions.notFoundException(id)
+            TodoExceptions.notFound(id)
         }
         repository.delete(todo)
     }
@@ -116,7 +123,8 @@ fun Todo.toResponse(): TodoResponse {
     return TodoResponse(
         id = this.id.toHexString(),
         title = this.title,
-        description= this.description,
+        description = this.description,
+        ownerId = this.ownerId.toHexString(),
         createdAt = this.createdAt,
         completedAt = this.completedAt,
         completed = this.completed,
