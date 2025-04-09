@@ -17,7 +17,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
-//@Validated
+@Validated
 @RestController
 @RequestMapping("/api/todos")
 class TodoController (private val repository: TodoRepository) {
