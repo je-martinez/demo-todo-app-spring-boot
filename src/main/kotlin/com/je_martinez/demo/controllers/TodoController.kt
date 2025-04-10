@@ -56,7 +56,7 @@ class TodoController (private val repository: TodoRepository) {
     @GetMapping(path = ["/{id}"])
     fun getById(
         @PathVariable @HexString id: String,
-        @CurrentUserId userId: ObjectId
+        @CurrentUserId userId: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{ TodoExceptions.notFound(id) }
         return todo.toResponse()
@@ -65,13 +65,13 @@ class TodoController (private val repository: TodoRepository) {
     @PostMapping
     fun create(
         @Valid @RequestBody body: TodoRequest,
-        @CurrentUserId userId: ObjectId
+        @CurrentUserId userId: String
     ):TodoResponse{
         val todo = repository.save(
             Todo(
                 title = body.title,
                 description = body.description,
-                ownerId = userId,
+                ownerId = ObjectId(userId),
             )
         )
         return todo.toResponse()
