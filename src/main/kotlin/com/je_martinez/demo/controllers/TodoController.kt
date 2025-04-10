@@ -52,6 +52,15 @@ class TodoController (private val repository: TodoRepository) {
         }
     }
 
+    @GetMapping
+    @RequestMapping("/by-owner", method = [RequestMethod.GET])
+    fun getAllByOwner(@CurrentUserId userId: String):List<TodoResponse>{
+        val todos = repository.findTodosByOwnerId(ObjectId(userId))
+        return todos.map {
+            it.toResponse()
+        }
+    }
+
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     @GetMapping(path = ["/{id}"])
     fun getById(
@@ -78,8 +87,10 @@ class TodoController (private val repository: TodoRepository) {
     }
 
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
+    @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     fun markAsUncompleted(
-        @PathVariable @HexString id: String
+        @PathVariable @HexString id: String,
+        @CurrentUserId userId: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
             TodoExceptions.notFound(id)
@@ -93,8 +104,10 @@ class TodoController (private val repository: TodoRepository) {
     }
 
     @PatchMapping(path = ["/mark-as-completed/{id}"])
+    @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     fun markAsCompleted(
-        @PathVariable @HexString id: String
+        @PathVariable @HexString id: String,
+        @CurrentUserId userId: String
     ):TodoResponse{
         val todo = repository.findById(ObjectId(id)).orElseThrow{
             TodoExceptions.notFound(id)
@@ -108,9 +121,11 @@ class TodoController (private val repository: TodoRepository) {
     }
 
     @DeleteMapping(path = ["/{id}"])
+    @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun delete(
-        @PathVariable @HexString id: String
+        @PathVariable @HexString id: String,
+        @CurrentUserId userId: String
     ) {
         val todo = repository.findById(ObjectId(id)).orElseThrow {
             TodoExceptions.notFound(id)
