@@ -1,8 +1,8 @@
 package com.je_martinez.demo.security
 
 import com.je_martinez.demo.exceptions.TokenExceptions
+import com.je_martinez.demo.utils.JwtUtils
 import io.jsonwebtoken.Claims
-import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -28,13 +28,15 @@ class JwtService(
     ):String{
         val now = Date()
         val expiryDate = Date(now.time + expiry)
-        return Jwts.builder()
-            .subject(userId)
-            .claim("type", type)
-            .issuedAt(now)
-            .expiration(expiryDate)
-            .signWith(secretKey)
-            .compact()
+        return JwtUtils.generateToken(
+            secretKey = secretKey,
+            subject = userId,
+            issuedAt = now,
+            expiration = expiryDate,
+            claims = mapOf(
+                "type" to type
+            ),
+        )
     }
 
     private fun parseAllClaims(token: String): Claims?{
@@ -42,16 +44,7 @@ class JwtService(
             token.removePrefix("Bearer ")
         }else token
 
-        return try {
-            Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(rawToken)
-                .payload
-        }catch (e: Exception){
-            return null
-        }
-
+        return JwtUtils.extractPayload(secretKey, rawToken)
     }
 
     fun generateAccessToken(userId: String):String{

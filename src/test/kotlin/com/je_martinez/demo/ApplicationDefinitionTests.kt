@@ -17,23 +17,23 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @WebMvcTest
 open class ApplicationDefinitionTests {
     @MockkBean
-    private lateinit var authService: AuthService
+    lateinit var authService: AuthService
 
     @MockkBean
-    private lateinit var jwtService: JwtService
+    lateinit var jwtService: JwtService
 
     @MockkBean
-    private lateinit var todoRepository: TodoRepository
+    lateinit var todoRepository: TodoRepository
 
     @MockkBean
-    private lateinit var userRepository: UserRepository
+    lateinit var userRepository: UserRepository
 
     @MockkBean
-    private lateinit var refreshTokenRepository: RefreshTokenRepository
+    lateinit var refreshTokenRepository: RefreshTokenRepository
 
     @Autowired
-    private lateinit var authController: AuthenticationController
+    lateinit var authController: AuthenticationController
 
     @Autowired
-    private lateinit var todoController: TodoController
+    lateinit var todoController: TodoController
 }
