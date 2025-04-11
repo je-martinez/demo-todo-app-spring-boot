@@ -1,4 +1,4 @@
-package com.je_martinez.demo
+package com.je_martinez.demo.controllers
 
 import com.je_martinez.demo.database.models.User
 import com.je_martinez.demo.dtos.authentication.AuthRequest
@@ -9,18 +9,14 @@ import com.je_martinez.demo.utils.JwtUtils
 import io.jsonwebtoken.security.Keys
 import io.mockk.every
 import io.mockk.verify
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf
 import java.util.Date
 
 class AuthenticationControllerTests: ApplicationDefinitionTests() {
 
-	private val mockUserId: ObjectId = ObjectId()
-	private val mockUserIdAsString: String = mockUserId.toHexString()
 	private val keyAsString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean enim erat, accumsan id lacus rhoncus."
 	private val secretKey =  Keys.hmacShaKeyFor(keyAsString.encodeToByteArray())
-
 
 	private fun generateTestToken(
 		claims: Map<String, Any>,

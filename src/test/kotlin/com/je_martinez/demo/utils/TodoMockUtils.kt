@@ -1,0 +1,25 @@
+package com.je_martinez.demo.utils
+
+import com.je_martinez.demo.dtos.todos.TodoResponse
+import org.bson.types.ObjectId
+import java.time.Instant
+
+object TodoMockUtils {
+    fun generateMockDataResponse(size:Int = 10, ownerId:ObjectId = ObjectId()):List<TodoResponse>{
+        val mockData = mutableListOf<TodoResponse>()
+        for(i in 1..size) {
+            mockData.add(
+                TodoResponse(
+                    id = ObjectId().toHexString(),
+                    title = "Title $i",
+                    description = "Description $i",
+                    ownerId = ownerId.toHexString(),
+                    createdAt = Instant.now(),
+                    completedAt = if(i % 2 == 0) Instant.now() else null,
+                    completed = i % 2 == 0
+                )
+            )
+        }
+        return mockData
+    }
+}
