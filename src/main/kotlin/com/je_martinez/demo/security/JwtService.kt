@@ -4,19 +4,18 @@ import com.je_martinez.demo.exceptions.TokenExceptions
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import io.jsonwebtoken.security.SignatureAlgorithm
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.*
-
-enum class TokenType {
-    TOKEN, REFRESH_TOKEN
-}
 
 @Service
 class JwtService(
     @Value("\${jwt.secret}") private val jwtSecret: String,
 ) {
+
+    enum class TokenType {
+        TOKEN, REFRESH_TOKEN
+    }
 
     private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret))
     private val accessTokenValidityMs = 15L * 60L * 1000L

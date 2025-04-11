@@ -2,7 +2,6 @@ package com.je_martinez.demo.controllers
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.je_martinez.demo.controllers.TodoController.TodoResponse
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.exceptions.TodoExceptions
@@ -86,6 +85,28 @@ class TodoController (private val repository: TodoRepository) {
         return todo.toResponse()
     }
 
+    @PutMapping
+    @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
+    @RequestMapping(path = ["/{id}"])
+    fun update(
+        @PathVariable @HexString id: String,
+        @Valid @RequestBody body: TodoRequest,
+        @CurrentUserId userId: String
+    ):TodoResponse{
+
+        val existingTodo = repository.findById(ObjectId(id)).orElseThrow{
+            throw TodoExceptions.notFound(id)
+        }
+
+        val todo = repository.save(
+            existingTodo.copy(
+                title = body.title,
+                description = body.description,
+            )
+        )
+        return todo.toResponse()
+    }
+
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     fun markAsUncompleted(
@@ -132,16 +153,18 @@ class TodoController (private val repository: TodoRepository) {
         }
         repository.delete(todo)
     }
+
+    fun Todo.toResponse(): TodoResponse {
+        return TodoResponse(
+            id = this.id.toHexString(),
+            title = this.title,
+            description = this.description,
+            ownerId = this.ownerId.toHexString(),
+            createdAt = this.createdAt,
+            completedAt = this.completedAt,
+            completed = this.completed,
+        )
+    }
 }
 
-fun Todo.toResponse(): TodoResponse {
-    return TodoResponse(
-        id = this.id.toHexString(),
-        title = this.title,
-        description = this.description,
-        ownerId = this.ownerId.toHexString(),
-        createdAt = this.createdAt,
-        completedAt = this.completedAt,
-        completed = this.completed,
-    )
-}
+
