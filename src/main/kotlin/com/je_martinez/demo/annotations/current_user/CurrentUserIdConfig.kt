@@ -1,4 +1,4 @@
-package com.je_martinez.demo.security.current_user
+package com.je_martinez.demo.annotations.current_user
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.method.support.HandlerMethodArgumentResolver

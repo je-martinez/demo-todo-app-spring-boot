@@ -1,4 +1,4 @@
-package com.je_martinez.demo.security.current_user
+package com.je_martinez.demo.annotations.current_user
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

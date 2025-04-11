@@ -1,5 +1,6 @@
-package com.je_martinez.demo.security
+package com.je_martinez.demo.security.filters
 
+import com.je_martinez.demo.features.authentication.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

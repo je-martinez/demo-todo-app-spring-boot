@@ -1,4 +1,4 @@
-package com.je_martinez.demo.security
+package com.je_martinez.demo.features.authentication
 
 import com.je_martinez.demo.exceptions.TokenExceptions
 import com.je_martinez.demo.utils.JwtUtils

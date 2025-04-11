@@ -1,4 +1,4 @@
-package com.je_martinez.demo.security
+package com.je_martinez.demo.features.authentication
 
 import com.je_martinez.demo.database.models.RefreshToken
 import com.je_martinez.demo.database.models.User
@@ -6,6 +6,7 @@ import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.UserRepository
 import com.je_martinez.demo.exceptions.AuthExceptions
 import com.je_martinez.demo.exceptions.TokenExceptions
+import com.je_martinez.demo.utils.HashEncoder
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +18,6 @@ import java.util.Base64
 class AuthService(
     private val jwtService: JwtService,
     private val userRepository: UserRepository,
-    private val hashEncoder: HashEncoder,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
 
@@ -35,7 +35,7 @@ class AuthService(
         return userRepository.save(
             User(
                 email = trimmedEmail,
-                hashedPassword = hashEncoder.encode(password)
+                hashedPassword = HashEncoder.encode(password)
             )
         )
     }
@@ -43,7 +43,7 @@ class AuthService(
     fun login(email: String, password: String): TokenPair {
         val user = userRepository.findByEmail(email) ?: throw AuthExceptions.invalidCredentials()
 
-        if(!hashEncoder.matches(password, user.hashedPassword)) throw AuthExceptions.invalidCredentials()
+        if(!HashEncoder.matches(password, user.hashedPassword)) throw AuthExceptions.invalidCredentials()
 
         val newAccessToken = jwtService.generateAccessToken(user.id.toHexString())
         val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString())

@@ -3,8 +3,8 @@ package com.je_martinez.demo
 import com.je_martinez.demo.database.models.User
 import com.je_martinez.demo.dtos.auth.AuthRequest
 import com.je_martinez.demo.dtos.auth.RefreshRequest
-import com.je_martinez.demo.security.AuthService
-import com.je_martinez.demo.security.HashEncoder
+import com.je_martinez.demo.features.authentication.AuthService
+import com.je_martinez.demo.utils.HashEncoder
 import com.je_martinez.demo.utils.JwtUtils
 import io.jsonwebtoken.security.Keys
 import io.mockk.every
@@ -21,7 +21,6 @@ class AuthenticationControllerTests: ApplicationDefinitionTests() {
 	private val keyAsString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean enim erat, accumsan id lacus rhoncus."
 	private val secretKey =  Keys.hmacShaKeyFor(keyAsString.encodeToByteArray())
 
-	private val hashEncoder: HashEncoder = HashEncoder()
 
 	private fun generateTestToken(
 		claims: Map<String, Any>,
@@ -60,7 +59,7 @@ class AuthenticationControllerTests: ApplicationDefinitionTests() {
 		val resultUser = User(
 			id = mockUserId,
 			email = requestBody.email,
-			hashedPassword = hashEncoder.encode(requestBody.password)
+			hashedPassword = HashEncoder.encode(requestBody.password)
 		)
 
 		every {

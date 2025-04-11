@@ -1,5 +1,6 @@
-package com.je_martinez.demo.security
+package com.je_martinez.demo.security.configs
 
+import com.je_martinez.demo.security.filters.JwtAuthFilter
 import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

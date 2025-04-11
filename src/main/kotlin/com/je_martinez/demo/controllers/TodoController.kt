@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.exceptions.TodoExceptions
-import com.je_martinez.demo.security.current_user.CurrentUserId
+import com.je_martinez.demo.annotations.current_user.CurrentUserId
 import com.je_martinez.demo.validators.HexString
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank

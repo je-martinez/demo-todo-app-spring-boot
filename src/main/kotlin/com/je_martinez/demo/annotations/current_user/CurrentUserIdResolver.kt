@@ -1,4 +1,4 @@
-package com.je_martinez.demo.security.current_user
+package com.je_martinez.demo.annotations.current_user
 
 import org.bson.types.ObjectId
 import org.springframework.core.MethodParameter
