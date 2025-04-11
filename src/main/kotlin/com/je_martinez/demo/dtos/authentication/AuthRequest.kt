@@ -1,4 +1,4 @@
-package com.je_martinez.demo.dtos.auth
+package com.je_martinez.demo.dtos.authentication
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern

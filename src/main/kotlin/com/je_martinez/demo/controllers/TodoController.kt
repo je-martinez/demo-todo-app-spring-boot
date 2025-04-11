@@ -6,6 +6,9 @@ import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.exceptions.TodoExceptions
 import com.je_martinez.demo.annotations.current_user.CurrentUserId
+import com.je_martinez.demo.dtos.todos.TodoRequest
+import com.je_martinez.demo.dtos.todos.TodoResponse
+import com.je_martinez.demo.features.todos.TodoService
 import com.je_martinez.demo.validators.HexString
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -21,69 +24,27 @@ import java.time.Instant
 @RestController
 @RequestMapping("/api/todos")
 @EnableMethodSecurity
-class TodoController (private val repository: TodoRepository) {
-
-    data class TodoRequest @JsonCreator constructor(
-        @field:NotBlank(message = "Title can't be blank.")
-        //@field:Min(value = 5, message = "Tile must be at least 5 characters long")
-        @JsonProperty("title")
-        val title: String,
-        @JsonProperty("description")
-        val description: String,
-    )
-
-    data class TodoResponse(
-        val id: String,
-        val title: String,
-        val ownerId: String,
-        val description: String,
-        val createdAt: Instant,
-        val completedAt: Instant?,
-        val completed: Boolean
-    )
+class TodoController (private val service: TodoService) {
 
     @GetMapping
-    fun getAll(
-    ):List<TodoResponse>{
-        val todos = repository.findAll()
-        return todos.map {
-            it.toResponse()
-        }
-    }
+    fun getAll():List<TodoResponse> = service.findAll()
 
     @GetMapping
-    @RequestMapping("/by-owner", method = [RequestMethod.GET])
-    fun getAllByOwner(@CurrentUserId userId: String):List<TodoResponse>{
-        val todos = repository.findTodosByOwnerId(ObjectId(userId))
-        return todos.map {
-            it.toResponse()
-        }
-    }
+    @RequestMapping("/by-owner")
+    fun getAllByOwner(@CurrentUserId userId: String):List<TodoResponse> = service.findAllByOwner(userId)
 
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     @GetMapping(path = ["/{id}"])
     fun getById(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{ TodoExceptions.notFound(id) }
-        return todo.toResponse()
-    }
+    ):TodoResponse = service.findById(id)
 
     @PostMapping
     fun create(
         @Valid @RequestBody body: TodoRequest,
         @CurrentUserId userId: String
-    ):TodoResponse{
-        val todo = repository.save(
-            Todo(
-                title = body.title,
-                description = body.description,
-                ownerId = ObjectId(userId),
-            )
-        )
-        return todo.toResponse()
-    }
+    ):TodoResponse = service.create(body, userId)
 
     @PutMapping
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
@@ -92,54 +53,21 @@ class TodoController (private val repository: TodoRepository) {
         @PathVariable @HexString id: String,
         @Valid @RequestBody body: TodoRequest,
         @CurrentUserId userId: String
-    ):TodoResponse{
-
-        val existingTodo = repository.findById(ObjectId(id)).orElseThrow{
-            throw TodoExceptions.notFound(id)
-        }
-
-        val todo = repository.save(
-            existingTodo.copy(
-                title = body.title,
-                description = body.description,
-            )
-        )
-        return todo.toResponse()
-    }
+    ):TodoResponse = service.update(id, body)
 
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     fun markAsUncompleted(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{
-            TodoExceptions.notFound(id)
-        }
-
-        val updatedTodo = repository.save(
-            todo.copy(completed = false, completedAt = null)
-        )
-
-        return updatedTodo.toResponse()
-    }
+    ):TodoResponse = service.markAsUncompleted(id)
 
     @PatchMapping(path = ["/mark-as-completed/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
     fun markAsCompleted(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ):TodoResponse{
-        val todo = repository.findById(ObjectId(id)).orElseThrow{
-            TodoExceptions.notFound(id)
-        }
-
-        val updatedTodo = repository.save(
-            todo.copy(completed = true, completedAt = Instant.now())
-        )
-
-        return updatedTodo.toResponse()
-    }
+    ):TodoResponse = service.markAsCompleted(id)
 
     @DeleteMapping(path = ["/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
@@ -147,24 +75,7 @@ class TodoController (private val repository: TodoRepository) {
     fun delete(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ) {
-        val todo = repository.findById(ObjectId(id)).orElseThrow {
-            TodoExceptions.notFound(id)
-        }
-        repository.delete(todo)
-    }
-
-    fun Todo.toResponse(): TodoResponse {
-        return TodoResponse(
-            id = this.id.toHexString(),
-            title = this.title,
-            description = this.description,
-            ownerId = this.ownerId.toHexString(),
-            createdAt = this.createdAt,
-            completedAt = this.completedAt,
-            completed = this.completed,
-        )
-    }
+    )  = service.delete(id)
 }
 
 

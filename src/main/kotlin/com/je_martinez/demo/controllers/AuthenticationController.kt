@@ -1,7 +1,7 @@
 package com.je_martinez.demo.controllers
 
-import com.je_martinez.demo.dtos.auth.AuthRequest
-import com.je_martinez.demo.dtos.auth.RefreshRequest
+import com.je_martinez.demo.dtos.authentication.AuthRequest
+import com.je_martinez.demo.dtos.authentication.RefreshRequest
 import com.je_martinez.demo.features.authentication.AuthService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
