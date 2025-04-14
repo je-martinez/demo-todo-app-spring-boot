@@ -51,4 +51,5 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	jvmArgs = listOf("--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED")
 }
