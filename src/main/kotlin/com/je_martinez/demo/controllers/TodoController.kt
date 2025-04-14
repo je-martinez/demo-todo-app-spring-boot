@@ -1,24 +1,16 @@
 package com.je_martinez.demo.controllers
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.je_martinez.demo.database.models.Todo
-import com.je_martinez.demo.database.repository.TodoRepository
-import com.je_martinez.demo.exceptions.TodoExceptions
 import com.je_martinez.demo.annotations.current_user.CurrentUserId
 import com.je_martinez.demo.dtos.todos.TodoRequest
 import com.je_martinez.demo.dtos.todos.TodoResponse
 import com.je_martinez.demo.features.todos.TodoService
 import com.je_martinez.demo.validators.HexString
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
 
 @Validated
 @RestController

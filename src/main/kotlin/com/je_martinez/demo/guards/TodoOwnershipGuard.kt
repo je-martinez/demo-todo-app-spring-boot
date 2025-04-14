@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated
 
 @Component("TodoOwnershipGuard")
 @Validated
-class TodoOwnershipEvaluator(
+class TodoOwnershipGuard(
     private val repository: TodoRepository
 ){
     fun isOwner(@HexString id: String, userId: String): Boolean{
