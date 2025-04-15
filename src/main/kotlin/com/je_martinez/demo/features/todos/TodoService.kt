@@ -14,6 +14,10 @@ class TodoService(
     private val repository: TodoRepository
 ) {
 
+    fun count(): Long {
+        return repository.count()
+    }
+
     fun findAll():List<TodoResponse>{
         val todos = repository.findAll()
         return todos.map {
