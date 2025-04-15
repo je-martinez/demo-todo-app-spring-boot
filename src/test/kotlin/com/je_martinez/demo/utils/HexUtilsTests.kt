@@ -21,4 +21,12 @@ class HexUtilsTests {
         assertEquals(false, result)
     }
 
+    @Test
+    fun  `isValidHexString nullable (false) - Test`(){
+        val result = HexUtils.isValidHexString(null)
+        assertInstanceOf<Boolean>(result)
+        assertEquals(false, result)
+    }
+
+
 }
