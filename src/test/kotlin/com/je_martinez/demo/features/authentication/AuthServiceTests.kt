@@ -5,12 +5,14 @@ import com.je_martinez.demo.database.models.User
 import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.UserRepository
 import com.je_martinez.demo.exceptions.AuthExceptions
+import com.je_martinez.demo.exceptions.TokenExceptions
 import com.je_martinez.demo.utils.AuthenticationMockUtils
 import com.ninjasquad.springmockk.SpykBean
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.slot
 import io.mockk.verify
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf
@@ -36,9 +38,13 @@ class AuthServiceTests {
 
     private var existingUsers = mutableListOf<User>()
 
+    private var rawUserPasswords = mutableListOf<String>()
+
     @BeforeTest
     fun testSetup() {
-        existingUsers.addAll(AuthenticationMockUtils.generateUsers(5))
+        val users = AuthenticationMockUtils.generateUsers(5)
+        existingUsers.addAll(users.map { it.user })
+        rawUserPasswords.addAll(users.map { it.rawPassword })
         userRepository.saveAll(existingUsers)
     }
 
@@ -91,7 +97,7 @@ class AuthServiceTests {
     @Test
     fun `Should be able to login`(){
         val user = existingUsers.first()
-        val password = "Test-0-password!12345"
+        val password = rawUserPasswords.first()
 
         val tokens = service.login(user.email, password)
 
@@ -136,6 +142,7 @@ class AuthServiceTests {
         val password = "AInvalid#12345!"
         try{
             service.login(user.email, password)
+            throw Exception("Method should failed before this point")
         }catch (e: Throwable){
             assertInstanceOf<ResponseStatusException>(e)
             every {
@@ -143,4 +150,78 @@ class AuthServiceTests {
             } throws AuthExceptions.invalidCredentials()
         }
     }
+
+    @Test
+    fun `Should throw an error on refresh token with an invalid token`(){
+        val invalidToken = "a-invalid-token"
+        try{
+            service.refresh(invalidToken)
+            throw Exception("Method should failed before this point")
+        }catch (e: Throwable){
+            assertInstanceOf<ResponseStatusException>(e)
+            verify(exactly = 1) { jwtService.validateRefreshToken(invalidToken) }
+            every {
+                service.refresh(invalidToken)
+            } throws TokenExceptions.invalidRefreshToken()
+        }
+    }
+
+    @Test
+    fun `Should throw an error on refresh if user doesn't exist in the database`(){
+        val mockUser = ObjectId()
+        val refreshToken = jwtService.generateRefreshToken(mockUser.toHexString())
+        try{
+            service.refresh(refreshToken)
+            throw Exception("Method should failed before this point")
+        }catch (e: Throwable){
+            assertInstanceOf<ResponseStatusException>(e)
+            every {
+                service.refresh(refreshToken)
+            } throws TokenExceptions.invalidRefreshToken()
+            verify(exactly = 1) { jwtService.validateRefreshToken(refreshToken) }
+            verify(exactly = 1) { userRepository.findById(mockUser) }
+            every {
+                userRepository.findById(mockUser)
+            } throws TokenExceptions.invalidRefreshToken()
+
+        }
+    }
+
+    @Test
+    fun `Should throw an error if refresh token doesn't exist in the database`(){
+        val mockUser = existingUsers.first().id
+        val unexistingToken = jwtService.generateRefreshToken(mockUser.toHexString())
+        try{
+            service.refresh(unexistingToken)
+            throw Exception("Method should failed before this point")
+        }catch (e: Throwable){
+            assertInstanceOf<ResponseStatusException>(e)
+            every {
+                service.refresh(unexistingToken)
+            } throws TokenExceptions.invalidRefreshTokenUsedOrExpired()
+            verify(exactly = 1) { jwtService.validateRefreshToken(unexistingToken) }
+            verify(exactly = 1) { userRepository.findById(mockUser) }
+            every {
+                refreshTokenRepository.findByUserIdAndHashedToken(any(), any())
+            } throws TokenExceptions.invalidRefreshTokenUsedOrExpired()
+        }
+    }
+
+    @Test
+    fun `Should be able to refresh token`(){
+        val userId = existingUsers.first().id
+        val email = existingUsers.first().email
+        val rawPassword = rawUserPasswords.first()
+        val tokens = service.login(email, rawPassword)
+        clearAllMocks() // Reset Mocks and Functions Calls
+        service.refresh(tokens.refreshToken)
+        verify(exactly = 1) { jwtService.validateRefreshToken(tokens.refreshToken) }
+        verify(exactly = 1) { userRepository.findById(userId) }
+        verify(exactly = 1) { refreshTokenRepository.findByUserIdAndHashedToken(any(), any()) }
+        verify(exactly = 1) { refreshTokenRepository.deleteByUserIdAndHashedToken(any(), any()) }
+        verify(exactly = 1){ jwtService.generateAccessToken(userId.toHexString()) }
+        verify(exactly = 1){ jwtService.generateRefreshToken(userId.toHexString()) }
+        verify(exactly = 1){ refreshTokenRepository.save(any()) }
+    }
+
 }

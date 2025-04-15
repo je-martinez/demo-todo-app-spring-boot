@@ -55,18 +55,18 @@ class JwtService(
         return generateToken(userId, TokenType.REFRESH_TOKEN, refreshTokenValidityMs)
     }
 
-    private fun validateToken(userId:String, tokenType:String): Boolean{
-        val claims = parseAllClaims(userId) ?: return false
+    private fun validateToken(token:String, tokenType:String): Boolean{
+        val claims = parseAllClaims(token) ?: return false
         val claimTokenType = claims["type"] as? String ?: return false
         return claimTokenType == tokenType
     }
 
-    fun validateAccessToken(userId: String):Boolean{
-        return validateToken(userId, TokenType.TOKEN.toString())
+    fun validateAccessToken(token: String):Boolean{
+        return validateToken(token, TokenType.TOKEN.toString())
     }
 
-    fun validateRefreshToken(userId: String):Boolean{
-        return validateToken(userId, TokenType.REFRESH_TOKEN.toString())
+    fun validateRefreshToken(token: String):Boolean{
+        return validateToken(token, TokenType.REFRESH_TOKEN.toString())
     }
 
     fun getUserIdFromToken(token:String):String{
