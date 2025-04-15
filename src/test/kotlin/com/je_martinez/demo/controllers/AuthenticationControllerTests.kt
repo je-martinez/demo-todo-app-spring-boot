@@ -45,7 +45,7 @@ class AuthenticationControllerTests: ApplicationDefinitionTests() {
 		)
 	}
 
-	@Test()
+	@Test
 	fun `Create User - Test`(){
 		val requestBody = AuthRequest(
 			email = "test@test.com",

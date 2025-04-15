@@ -171,8 +171,6 @@ class AuthenticationControllerRestTests: ApplicationDefinitionRestTests() {
 
         val tokens = login()
 
-        assertNotNull(tokens)
-
         val sBody = mapOf(
             "refreshToken" to tokens.refreshToken,
         )
