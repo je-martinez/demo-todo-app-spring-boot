@@ -59,6 +59,40 @@ class AuthenticationControllerRestTests: ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 if register credentials are nullable`(){
+
+        val fBody = mapOf(
+            "email" to null,
+            "password" to "TestPassword1234$"
+        )
+
+        val entity = HttpEntity(fBody, jsonHeaders)
+
+        val fResponse: ResponseEntity<Void> = template.exchange(
+            "$authBaseUrl/register",
+            HttpMethod.POST,
+            entity,
+        )
+
+        assertEquals(HttpStatus.BAD_REQUEST, fResponse.statusCode)
+
+        val sBody = mapOf(
+            "email" to "test@example.com",
+            "password" to null
+        )
+
+        val sEntity = HttpEntity(sBody, jsonHeaders)
+
+        val sResponse: ResponseEntity<Void> = template.exchange(
+            "$authBaseUrl/register",
+            HttpMethod.POST,
+            sEntity,
+        )
+
+        assertEquals(HttpStatus.BAD_REQUEST, sResponse.statusCode)
+    }
+
+    @Test
     fun `Should return 200 if register credentials are valid`(){
 
         val fBody = mapOf(
@@ -93,6 +127,42 @@ class AuthenticationControllerRestTests: ApplicationDefinitionRestTests() {
         assertEquals(HttpStatus.BAD_REQUEST, fResponse.statusCode)
 
         val sBody = mapOf("email" to "test@example.com", "password" to "weak-pass")
+
+        val sEntity = HttpEntity(sBody, jsonHeaders)
+
+        val sResponse: ResponseEntity<Void> = template.exchange(
+            "$authBaseUrl/login",
+            HttpMethod.POST,
+            sEntity,
+        )
+
+        assertEquals(HttpStatus.BAD_REQUEST, sResponse.statusCode)
+    }
+
+    @Test
+    fun `Should return 400 on login if credentials are nullable`(){
+
+        val user = existingUsers.first()
+
+        val fBody = mapOf(
+            "email" to null,
+            "password" to user.rawPassword
+        )
+
+        val entity = HttpEntity(fBody, jsonHeaders)
+
+        val fResponse: ResponseEntity<Void> = template.exchange(
+            "$authBaseUrl/login",
+            HttpMethod.POST,
+            entity,
+        )
+
+        assertEquals(HttpStatus.BAD_REQUEST, fResponse.statusCode)
+
+        val sBody = mapOf(
+            "email" to user.user.email,
+            "password" to null
+        )
 
         val sEntity = HttpEntity(sBody, jsonHeaders)
 

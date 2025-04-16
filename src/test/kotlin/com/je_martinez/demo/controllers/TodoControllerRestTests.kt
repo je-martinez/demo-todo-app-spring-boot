@@ -154,6 +154,22 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 on create if body provided has nullable properties`(){
+        val tokens = login()
+        val title = null
+        val description =  "New Description!"
+        val response = template.exchange<Void>(
+            todosBaseUrl,
+            HttpMethod.POST,
+            getAuthorizedRequest(mapOf(
+                "title" to title,
+                "description" to description,
+            ), tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 on create if body provided is valid`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -173,7 +189,6 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
         assertEquals(response.body?.ownerId, userId)
         assertEquals(response.body?.title, title)
         assertEquals(response.body?.description, description)
-
     }
 
     @Test
@@ -248,6 +263,26 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
         val description = "Updated Description!"
         val response = template.exchange<Void>(
             "$todosBaseUrl/123",
+            HttpMethod.PUT,
+            getAuthorizedRequest(mapOf(
+                "title" to title,
+                "description" to description,
+            ), tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
+    fun `Should return 400 on update if a valid body has nullable properties`(){
+        val tokens = login()
+        val userId = jwtService.getUserIdFromToken(tokens.accessToken)
+        val todoToUpdate = existingTodos.first{
+            it.ownerId.toHexString() == userId
+        }
+        val title = null
+        val description = "Updated Description!"
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/${todoToUpdate.id.toHexString()}",
             HttpMethod.PUT,
             getAuthorizedRequest(mapOf(
                 "title" to title,

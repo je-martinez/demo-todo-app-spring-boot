@@ -96,7 +96,7 @@ class ApplicationDefinitionRestTests {
         }
     }
 
-    fun getAuthorizedRequest(body:Map<String, Any>?, accessToken: String?):HttpEntity<Any>{
+    fun getAuthorizedRequest(body:Map<String, Any?>?, accessToken: String?):HttpEntity<Any>{
         return HttpEntity(body, getAuthorizedHeaders(accessToken))
     }
 
