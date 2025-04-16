@@ -170,6 +170,17 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 on create if body is empty`(){
+        val tokens = login()
+        val response = template.exchange<Void>(
+            todosBaseUrl,
+            HttpMethod.POST,
+            getAuthorizedRequest("{}", tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 on create if body provided is valid`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -273,7 +284,7 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
-    fun `Should return 400 on update if a valid body has nullable properties`(){
+    fun `Should return 400 on update if a body has nullable properties`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
         val todoToUpdate = existingTodos.first{
@@ -288,6 +299,41 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
                 "title" to title,
                 "description" to description,
             ), tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
+    fun `Should return 400 on update if a valid body has invalid values`(){
+        val tokens = login()
+        val userId = jwtService.getUserIdFromToken(tokens.accessToken)
+        val todoToUpdate = existingTodos.first{
+            it.ownerId.toHexString() == userId
+        }
+        val title = ""
+        val description = "Description"
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/${todoToUpdate.id.toHexString()}",
+            HttpMethod.PUT,
+            getAuthorizedRequest(mapOf(
+                "title" to title,
+                "description" to description,
+            ), tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
+    fun `Should return 400 on update if a valid body is empty`(){
+        val tokens = login()
+        val userId = jwtService.getUserIdFromToken(tokens.accessToken)
+        val todoToUpdate = existingTodos.first{
+            it.ownerId.toHexString() == userId
+        }
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/${todoToUpdate.id.toHexString()}",
+            HttpMethod.PUT,
+            getAuthorizedRequest("{}", tokens.accessToken)
         )
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
