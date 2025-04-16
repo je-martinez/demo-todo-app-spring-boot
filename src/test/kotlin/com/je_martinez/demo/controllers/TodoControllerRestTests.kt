@@ -97,6 +97,17 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 if id is not a valid hex string`(){
+        val tokens = login()
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/123",
+            HttpMethod.GET,
+            getAuthorizedRequest(null, tokens.accessToken),
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 if user has ownership of the todo`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -231,6 +242,22 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 on update if id is not a valid hex string`(){
+        val tokens = login()
+        val title = "Updated Title!"
+        val description = "Updated Description!"
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/123",
+            HttpMethod.PUT,
+            getAuthorizedRequest(mapOf(
+                "title" to title,
+                "description" to description,
+            ), tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 on update if a valid body is provided`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -292,6 +319,17 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 on mark as completed if id is not a valid hex string`(){
+        val tokens = login()
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/mark-as-completed/123",
+            HttpMethod.PATCH,
+            getAuthorizedRequest(null, tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 on mark as completed update if a valid body is provided`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -345,6 +383,17 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
             getAuthorizedRequest(null, tokens.accessToken)
         )
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun `Should return 400 on mark as uncompleted if id is not a valid hex string`(){
+        val tokens = login()
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/mark-as-uncompleted/123",
+            HttpMethod.PATCH,
+            getAuthorizedRequest(null, tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
     @Test
@@ -404,6 +453,17 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
     }
 
     @Test
+    fun `Should return 400 on delete if id is not a valid hex string`(){
+        val tokens = login()
+        val response = template.exchange<Void>(
+            "$todosBaseUrl/123",
+            HttpMethod.DELETE,
+            getAuthorizedRequest(null, tokens.accessToken)
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
     fun `Should return 200 on delete if a valid body is provided`(){
         val tokens = login()
         val userId = jwtService.getUserIdFromToken(tokens.accessToken)
@@ -417,5 +477,4 @@ class TodoControllerRestTests:ApplicationDefinitionRestTests() {
         )
         assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
-
 }
