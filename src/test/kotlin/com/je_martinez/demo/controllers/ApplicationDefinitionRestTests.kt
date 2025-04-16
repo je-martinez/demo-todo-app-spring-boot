@@ -88,4 +88,16 @@ class ApplicationDefinitionRestTests {
 
         return fResponse.body ?: throw Exception("Login failed on ApplicationDefinitionRestTests")
     }
+
+    fun getAuthorizedHeaders(accessToken:String?, userIndex:Int = 0): HttpHeaders {
+        val token = accessToken ?: login(userIndex).accessToken
+        return jsonHeaders.apply {
+            add("Authorization", "Bearer $token")
+        }
+    }
+
+    fun getAuthorizedRequest(body:Map<String, Any>?, accessToken: String?):HttpEntity<Any>{
+        return HttpEntity(body, getAuthorizedHeaders(accessToken))
+    }
+
 }
