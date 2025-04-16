@@ -6,6 +6,7 @@ import com.je_martinez.demo.dtos.todos.TodoResponse
 import com.je_martinez.demo.features.todos.TodoService
 import com.je_martinez.demo.validators.HexString
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/todos")
 @EnableMethodSecurity
 @Tag(name = "Todo Controller", description = "Controller for Todo Entity Operations")
+@SecurityRequirement(name = "bearerAuth")
 class TodoController (private val service: TodoService) {
 
     @GetMapping

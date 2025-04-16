@@ -1,6 +1,11 @@
 package com.je_martinez.demo.security.configs
 
 import com.je_martinez.demo.security.filters.JwtAuthFilter
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,6 +18,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 class SecurityConfig {
+
+    @Bean
+    fun customOpenAPI(): OpenAPI {
+        val securitySchemeName = "bearerAuth"
+        return OpenAPI()
+            .info(
+                Info()
+                    .title("Todo Demo API")
+                    .version("1.0.0")
+                    .description("API Documentation")
+            )
+            .addSecurityItem(SecurityRequirement().addList(securitySchemeName))
+            .components(
+                Components()
+                    .addSecuritySchemes(
+                        securitySchemeName,
+                        SecurityScheme()
+                            .name(securitySchemeName)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT")
+                    )
+            )
+    }
 
     @Bean
     fun filterChain(httpSecurity: HttpSecurity, jwtAuthFilter: JwtAuthFilter):SecurityFilterChain{
