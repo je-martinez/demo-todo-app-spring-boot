@@ -4,21 +4,23 @@ import com.je_martinez.demo.exceptions.TokenExceptions
 import com.je_martinez.demo.utils.JwtUtils
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.crypto.SecretKey
 
 @Service
 class JwtService(
-    @Value("\${jwt.secret}") private val jwtSecret: String,
+    @Autowired env: Environment
 ) {
 
     enum class TokenType {
         TOKEN, REFRESH_TOKEN
     }
 
-    private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret))
+    private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getRequiredProperty("JWT_SECRET_BASE64")))
     private val accessTokenValidityMs = 15L * 60L * 1000L
     val refreshTokenValidityMs = 30L * 24 * 60 * 60 * 1000L
 
