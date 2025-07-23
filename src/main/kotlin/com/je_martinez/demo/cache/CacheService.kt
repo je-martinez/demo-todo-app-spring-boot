@@ -4,14 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
+import java.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
 
 @Repository
 class CacheService(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val objectMapper: ObjectMapper
 ) {
-    fun save(key: String, value: Any) {
-        redisTemplate.opsForValue().set(key, value)
+    fun save(key: String, value: Any, ttl: Duration = 30.seconds.toJavaDuration()) {
+        redisTemplate.opsForValue().set(key, value, ttl)
     }
 
     fun find(key: String): String? {
