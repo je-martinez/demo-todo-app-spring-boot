@@ -12,7 +12,6 @@ import kotlin.time.toJavaDuration
 class TodoCacheService(
     private val cacheService: CacheService
 ) {
-
     enum class InvalidationType(val value:String){
         CREATE("CREATE"),
         UPDATE("UPDATE"),
