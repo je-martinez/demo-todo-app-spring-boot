@@ -20,7 +20,8 @@ class CacheService(
 
     fun save(key: String, value: Any, ttl: Duration = 30.seconds.toJavaDuration()) {
         log.info("Saving key: $key on Redis Cache")
-        redisTemplate.opsForValue().set(key, value, ttl)
+        val json = objectMapper.writeValueAsString(value)
+        redisTemplate.opsForValue().set(key, json, ttl)
     }
 
     fun find(key: String): String? {
@@ -34,14 +35,25 @@ class CacheService(
 
     @Suppress("UNCHECKED_CAST")
     fun <R> findAsType(key: String, typeRef: TypeReference<R>): R? {
-        log.info("Retrieving key:<$key> with type:<$typeRef> from Redis Cache")
+        log.info("Retrieving key: <$key> with type: <$typeRef> from Redis Cache")
         val raw = redisTemplate.opsForValue().get(key)
-        if(raw == null){
-            log.info("Key:<$key> with type:<$typeRef> not found on Redis Cache")
+
+        if (raw == null) {
+            log.info("Key: <$key> not found in Redis Cache")
+            return null
         }
-        return when (raw) {
-            is String -> objectMapper.readValue(raw, typeRef)
-            else -> raw as? R
+
+        if (raw !is String) {
+            log.warn("Key: <$key> expected to be String (JSON) but got ${raw::class.qualifiedName}")
+            return null
+        }
+
+        return try {
+            val result = objectMapper.readValue(raw, typeRef)
+            result
+        } catch (ex: Exception) {
+            log.error("Failed to deserialize key: <$key> with type: <$typeRef>", ex)
+            null
         }
     }
 

@@ -17,10 +17,10 @@ class JwtService(
 ) {
 
     enum class TokenType {
-        TOKEN, REFRESH_TOKEN
+    TOKEN, REFRESH_TOKEN
     }
 
-    private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getRequiredProperty("JWT_SECRET_BASE64")))
+    private val secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getRequiredProperty("jwt.secret")))
     private val accessTokenValidityMs = 15L * 60L * 1000L
     val refreshTokenValidityMs = 30L * 24 * 60 * 60 * 1000L
 

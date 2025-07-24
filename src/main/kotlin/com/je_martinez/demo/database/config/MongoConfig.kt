@@ -14,6 +14,7 @@ class MongoConfig(
         fun  getDatabaseName(uri:String):String? {
             try{
                 val connectionString = com.mongodb.ConnectionString(uri)
+                print(connectionString.database)
                 return connectionString.database
             }catch (_: Exception){
                 return null;
@@ -22,7 +23,7 @@ class MongoConfig(
     }
 
     override fun getDatabaseName(): String {
-        return getDatabaseName(env.getProperty("MONGO_CNX") ?: "") ?: throw Exception("It required a valid database connection")
+        return getDatabaseName(env.getProperty("spring.data.mongodb.uri") ?: "") ?: throw Exception("It required a valid database connection")
     }
 
     override fun autoIndexCreation(): Boolean {

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class JacksonConfig {
+
     @Bean
     fun objectMapper(): ObjectMapper =
         jacksonObjectMapper()
