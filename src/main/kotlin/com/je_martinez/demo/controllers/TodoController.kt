@@ -68,7 +68,7 @@ class TodoController (private val service: TodoService) {
         @PathVariable @HexString id: String,
         @Valid @RequestBody body: TodoRequest,
         @CurrentUserId userId: String
-    ):TodoResponse = service.update(id, body)
+    ):TodoResponse = service.update(id, body, userId)
 
     @PatchMapping(path = ["/mark-as-uncompleted/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
@@ -78,7 +78,7 @@ class TodoController (private val service: TodoService) {
     fun markAsUncompleted(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ):TodoResponse = service.markAsUncompleted(id)
+    ):TodoResponse = service.markAsUncompleted(id, userId)
 
     @PatchMapping(path = ["/mark-as-completed/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
@@ -88,7 +88,7 @@ class TodoController (private val service: TodoService) {
     fun markAsCompleted(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    ):TodoResponse = service.markAsCompleted(id)
+    ):TodoResponse = service.markAsCompleted(id,userId)
 
     @DeleteMapping(path = ["/{id}"])
     @PreAuthorize("@TodoOwnershipGuard.isOwner(#id, #userId)")
@@ -98,7 +98,7 @@ class TodoController (private val service: TodoService) {
     fun delete(
         @PathVariable @HexString id: String,
         @CurrentUserId userId: String
-    )  = service.delete(id)
+    )  = service.delete(id, userId)
 }
 
 
