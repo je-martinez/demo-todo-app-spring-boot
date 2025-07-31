@@ -1,4 +1,4 @@
-package com.je_martinez.demo.cache
+package com.je_martinez.demo.cache.config
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.je_martinez.demo.cache.features.todos.TodosCacheSettings
 import com.je_martinez.demo.cache.features.utils.CacheUtils
+import com.je_martinez.demo.cache.log.LoggingCacheManager
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -52,6 +53,7 @@ class RedisConfig {
                 ObjectMapper.DefaultTyping.EVERYTHING,
                 JsonTypeInfo.As.PROPERTY
             )
+
         val defaultTtl = RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(1.minutes.toJavaDuration())
             .disableCachingNullValues()
@@ -63,9 +65,12 @@ class RedisConfig {
         val featureCacheMaps =
             //Feature: TODOs
             CacheUtils.buildFeatureMap(defaultTtl, TodosCacheSettings.CACHE_TTL)
-        return RedisCacheManager.builder(connectionFactory)
+
+        val standardCacheManager = RedisCacheManager.builder(connectionFactory)
             .cacheDefaults(defaultTtl)
             .withInitialCacheConfigurations(featureCacheMaps)
             .build()
+
+        return LoggingCacheManager(standardCacheManager)
     }
 }
