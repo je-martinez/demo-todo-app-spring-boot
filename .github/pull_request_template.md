@@ -1,5 +1,3 @@
-# 🚀 Pull Request – Spring Boot REST API
-
 ## 📋 Description
 
 Please include a summary of the changes and what issue is fixed.
