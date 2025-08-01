@@ -1,7 +1,7 @@
 package com.je_martinez.demo.utils
 
 import com.je_martinez.demo.database.models.Todo
-import com.je_martinez.demo.dtos.todos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.TodoResponse
 import org.bson.types.ObjectId
 import java.time.Instant
 

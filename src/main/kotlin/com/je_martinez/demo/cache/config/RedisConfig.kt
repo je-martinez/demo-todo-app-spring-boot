@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.je_martinez.demo.cache.features.todos.TodosCacheSettings
-import com.je_martinez.demo.cache.features.utils.CacheUtils
+import com.je_martinez.demo.features.todos.cache.TodosCacheSettings
+import com.je_martinez.demo.cache.utils.CacheUtils
 import com.je_martinez.demo.cache.log.LoggingCacheManager
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Bean

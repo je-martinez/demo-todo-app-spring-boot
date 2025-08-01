@@ -1,7 +1,7 @@
 package com.je_martinez.demo.controllers
 
-import com.je_martinez.demo.dtos.todos.TodoRequest
-import com.je_martinez.demo.dtos.todos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.TodoRequest
+import com.je_martinez.demo.features.todos.dtos.TodoResponse
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.assertInstanceOf
 import org.springframework.boot.test.web.client.exchange

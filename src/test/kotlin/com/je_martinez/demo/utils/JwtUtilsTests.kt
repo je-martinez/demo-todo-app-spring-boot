@@ -1,6 +1,7 @@
 package com.je_martinez.demo.utils
 
-import com.je_martinez.demo.features.authentication.JwtService
+import com.je_martinez.demo.features.authentication.services.JwtService
+import com.je_martinez.demo.features.authentication.utils.JwtUtils
 import io.jsonwebtoken.security.Keys
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test

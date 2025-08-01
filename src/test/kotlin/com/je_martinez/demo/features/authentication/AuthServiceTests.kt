@@ -4,8 +4,10 @@ import com.je_martinez.demo.database.models.RefreshToken
 import com.je_martinez.demo.database.models.User
 import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.UserRepository
-import com.je_martinez.demo.exceptions.AuthExceptions
-import com.je_martinez.demo.exceptions.TokenExceptions
+import com.je_martinez.demo.features.authentication.exceptions.AuthExceptions
+import com.je_martinez.demo.features.authentication.exceptions.TokenExceptions
+import com.je_martinez.demo.features.authentication.services.AuthService
+import com.je_martinez.demo.features.authentication.services.JwtService
 import com.je_martinez.demo.utils.AuthenticationMockUtils
 import com.ninjasquad.springmockk.SpykBean
 import io.mockk.clearAllMocks

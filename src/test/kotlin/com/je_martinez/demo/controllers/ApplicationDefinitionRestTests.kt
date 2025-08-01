@@ -4,8 +4,8 @@ import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.database.repository.UserRepository
-import com.je_martinez.demo.features.authentication.AuthService
-import com.je_martinez.demo.features.authentication.JwtService
+import com.je_martinez.demo.features.authentication.services.AuthService
+import com.je_martinez.demo.features.authentication.services.JwtService
 import com.je_martinez.demo.utils.AuthenticationMockUtils
 import com.je_martinez.demo.utils.MockUser
 import com.je_martinez.demo.utils.TodoMockUtils
