@@ -1,6 +1,7 @@
 package com.je_martinez.demo.features.authentication.controllers
 
 import com.je_martinez.demo.features.authentication.commands.login.LoginCommand
+import com.je_martinez.demo.features.authentication.commands.refresh_token.RefreshTokenCommand
 import com.je_martinez.demo.features.authentication.commands.register.RegisterCommand
 import com.je_martinez.demo.features.authentication.dtos.requests.AuthRequest
 import com.je_martinez.demo.features.authentication.dtos.requests.RefreshRequest
@@ -47,5 +48,9 @@ class AuthenticationController(
 
     @PostMapping("/refresh")
     @Operation(summary = "Refresh user endpoint")
-    fun refresh(@Valid @RequestBody body: RefreshRequest) = authService.refresh(body.refreshToken)
+    fun refresh(@Valid @RequestBody body: RefreshRequest): CompletableFuture<Tokens> {
+        return KediatrUtils.wrapMediatorExecution {
+            mediator.send(RefreshTokenCommand(body.refreshToken))
+        }
+    }
 }

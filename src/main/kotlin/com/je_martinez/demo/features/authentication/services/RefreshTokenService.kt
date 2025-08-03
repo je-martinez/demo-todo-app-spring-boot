@@ -21,6 +21,19 @@ class RefreshTokenService(
     private val jwtService: JwtService,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
+
+    fun deleteRefreshToken(userId: ObjectId, hashedToken: String){
+        val existingToken = refreshTokenRepository.findByUserIdAndHashedToken(
+            userId, hashedToken
+        )
+
+        if(existingToken == null){
+            throw TokenExceptions.invalidRefreshTokenUsedOrExpired()
+        }
+
+        refreshTokenRepository.deleteByUserIdAndHashedToken(userId, hashedToken)
+    }
+
     fun storeRefreshToken(userId: ObjectId, rawRefreshToken: String){
         val hashed = TokenUtils.hashToken(rawRefreshToken)
         val expiryMs = jwtService.refreshTokenValidityMs
