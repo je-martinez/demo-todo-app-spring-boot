@@ -4,6 +4,7 @@ import com.je_martinez.demo.database.models.RefreshToken
 import com.je_martinez.demo.database.models.User
 import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.UserRepository
+import com.je_martinez.demo.features.authentication.dtos.shared.Tokens
 import com.je_martinez.demo.features.authentication.exceptions.AuthExceptions
 import com.je_martinez.demo.features.authentication.exceptions.TokenExceptions
 import com.je_martinez.demo.features.authentication.utils.HashEncoder
@@ -21,11 +22,6 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
 
-    data class TokenPair(
-        val accessToken: String,
-        val refreshToken: String
-    )
-
     fun register(email:String, password:String): User {
         val trimmedEmail = email.trim()
         val user = userRepository.findByEmail(trimmedEmail)
@@ -40,7 +36,7 @@ class AuthService(
         )
     }
 
-    fun login(email: String, password: String): TokenPair {
+    fun login(email: String, password: String): Tokens {
         val user = userRepository.findByEmail(email) ?: throw AuthExceptions.invalidCredentials()
 
         if(!HashEncoder.matches(password, user.hashedPassword)) throw AuthExceptions.invalidCredentials()
@@ -50,14 +46,14 @@ class AuthService(
 
         storeRefreshToken(user.id, newRefreshToken)
 
-        return TokenPair(
+        return Tokens(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
         )
     }
 
     @Transactional
-    fun refresh(refreshToken: String): TokenPair {
+    fun refresh(refreshToken: String): Tokens {
         if(!jwtService.validateRefreshToken(refreshToken)) throw TokenExceptions.invalidRefreshToken()
 
         val userId = jwtService.getUserIdFromToken(refreshToken)
@@ -78,7 +74,7 @@ class AuthService(
 
         storeRefreshToken(user.id, newRefreshToken)
 
-        return TokenPair(
+        return Tokens(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
         )

@@ -1,8 +1,8 @@
 package com.je_martinez.demo.controllers
 
 import com.je_martinez.demo.database.models.User
-import com.je_martinez.demo.features.authentication.dtos.AuthRequest
-import com.je_martinez.demo.features.authentication.dtos.RefreshRequest
+import com.je_martinez.demo.features.authentication.dtos.requests.AuthRequest
+import com.je_martinez.demo.features.authentication.dtos.requests.RefreshRequest
 import com.je_martinez.demo.features.authentication.services.AuthService
 import com.je_martinez.demo.features.authentication.utils.HashEncoder
 import com.je_martinez.demo.features.authentication.utils.JwtUtils

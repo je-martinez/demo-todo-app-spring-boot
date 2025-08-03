@@ -1,4 +1,4 @@
-package com.je_martinez.demo.features.authentication.dtos
+package com.je_martinez.demo.features.authentication.dtos.requests
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email

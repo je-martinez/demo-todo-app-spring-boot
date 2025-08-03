@@ -1,4 +1,4 @@
-package com.je_martinez.demo.features.authentication.dtos
+package com.je_martinez.demo.features.authentication.dtos.responses
 
 import com.je_martinez.demo.database.models.User
 
