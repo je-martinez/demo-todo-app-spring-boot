@@ -6,6 +6,7 @@ import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.features.todos.exceptions.TodoExceptions
 import com.je_martinez.demo.features.todos.dtos.TodoRequest
 import com.je_martinez.demo.features.todos.dtos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.toResponse
 import org.bson.types.ObjectId
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.CachePut
@@ -121,17 +122,5 @@ class TodoService(
         return repository.save(
             todo.copy(completed = false, completedAt = null)
         ).toResponse()
-    }
-
-    fun Todo.toResponse(): TodoResponse {
-        return TodoResponse(
-            id = this.id.toHexString(),
-            title = this.title,
-            description = this.description,
-            ownerId = this.ownerId.toHexString(),
-            createdAt = this.createdAt,
-            completedAt = this.completedAt,
-            completed = this.completed,
-        )
     }
 }
