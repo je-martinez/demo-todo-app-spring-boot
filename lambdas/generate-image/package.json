@@ -1,0 +1,29 @@
+{
+  "name": "sqs-lambda",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "local:run": "node --loader ts-node/esm src/local-run.ts",
+    "deploy": "bash ./scripts/deploy-localstack.sh",
+    "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip .",
+    "clean": "rm -rf dist dist.zip"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.131",
+    "@types/node": "^20.11.30",
+    "dotenv": "^17.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0"
+  }
+}
