@@ -7,7 +7,6 @@ plugins {
 
 group = "com.je_martinez"
 version = "0.0.1-SNAPSHOT"
-val kediatrVersion = "4.2.0"
 
 java {
 	toolchain {
@@ -32,8 +31,6 @@ dependencies {
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("com.trendyol:kediatr-core:${kediatrVersion}")
-	implementation("com.trendyol:kediatr-spring-boot-3x-starter:${kediatrVersion}")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
