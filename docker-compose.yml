@@ -12,5 +12,20 @@ services:
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: unless-stopped
 
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"    # endpoint unificado
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=sqs,iam,lambda,logs,cloudwatch
+      - DEBUG=1
+      - LAMBDA_EXECUTOR=docker
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "localstack-data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
 volumes:
   redis-data:
+  localstack-data:

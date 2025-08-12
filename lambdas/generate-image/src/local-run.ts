@@ -1,6 +1,6 @@
 // src/local-run.ts
 import "dotenv/config";         // <- carga .env y .env.local si existen
-import { handler } from "./handler.ts";
+import { handler } from "./handler";
 import * as fs from 'fs';
 const event = JSON.parse(fs.readFileSync("./scripts/sample-sqs-event.json", 'utf-8'));
 

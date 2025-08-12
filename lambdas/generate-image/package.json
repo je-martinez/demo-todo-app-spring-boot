@@ -1,7 +1,6 @@
 {
   "name": "sqs-lambda",
   "version": "1.0.0",
-  "type": "module",
   "private": true,
   "ts-node": {
     "esm": true,
@@ -10,9 +9,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "local:run": "node --loader ts-node/esm src/local-run.ts",
-    "deploy": "bash ./scripts/deploy-localstack.sh",
-    "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip .",
+    "local:run": "node --loader ts-node/esm --project tsconfig.node.json src/local-run.ts",
+    "deploy": "./scripts/deploy-localstack.sh",
+    "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip . && cd .. && zip -r dist.zip node_modules",
     "clean": "rm -rf dist dist.zip"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 // src/handler.ts
 import type { SQSBatchItemFailure, SQSHandler } from "aws-lambda";
-import { logger } from "./logger.ts";
+import { logger } from "./logger";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
