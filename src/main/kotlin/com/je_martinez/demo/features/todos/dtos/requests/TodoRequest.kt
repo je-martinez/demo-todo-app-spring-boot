@@ -1,4 +1,4 @@
-package com.je_martinez.demo.features.todos.dtos
+package com.je_martinez.demo.features.todos.dtos.requests
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty

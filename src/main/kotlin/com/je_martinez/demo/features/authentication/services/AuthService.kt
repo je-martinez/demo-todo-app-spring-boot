@@ -1,9 +1,9 @@
 package com.je_martinez.demo.features.authentication.services
 
-import com.je_martinez.demo.database.models.RefreshToken
 import com.je_martinez.demo.database.models.User
-import com.je_martinez.demo.database.repository.RefreshTokenRepository
 import com.je_martinez.demo.database.repository.UserRepository
+import com.je_martinez.demo.features.authentication.dtos.responses.RegisterResponse
+import com.je_martinez.demo.features.authentication.dtos.responses.toResponse
 import com.je_martinez.demo.features.authentication.dtos.shared.Tokens
 import com.je_martinez.demo.features.authentication.exceptions.AuthExceptions
 import com.je_martinez.demo.features.authentication.exceptions.TokenExceptions
@@ -12,17 +12,16 @@ import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.security.MessageDigest
-import java.time.Instant
-import java.util.Base64
+import java.util.*
 
 @Service
 class AuthService(
     private val jwtService: JwtService,
     private val userRepository: UserRepository,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val refreshTokenService: RefreshTokenService
 ) {
 
-    fun register(email:String, password:String): User {
+    fun register(email:String, password:String): RegisterResponse {
         val trimmedEmail = email.trim()
         val user = userRepository.findByEmail(trimmedEmail)
         if (user != null) {
@@ -33,7 +32,7 @@ class AuthService(
                 email = trimmedEmail,
                 hashedPassword = HashEncoder.encode(password)
             )
-        )
+        ).toResponse()
     }
 
     fun login(email: String, password: String): Tokens {
@@ -44,7 +43,7 @@ class AuthService(
         val newAccessToken = jwtService.generateAccessToken(user.id.toHexString())
         val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString())
 
-        storeRefreshToken(user.id, newRefreshToken)
+        refreshTokenService.storeRefreshToken(user.id, newRefreshToken)
 
         return Tokens(
             accessToken = newAccessToken,
@@ -63,34 +62,19 @@ class AuthService(
         }
 
         val hashed = hashToken(refreshToken)
-        refreshTokenRepository.findByUserIdAndHashedToken(
-            user.id, hashed
-        ) ?: throw TokenExceptions.invalidRefreshTokenUsedOrExpired()
 
-        refreshTokenRepository.deleteByUserIdAndHashedToken(user.id, hashed)
+        refreshTokenService.deleteRefreshToken(
+            user.id, hashed
+        )
 
         val newAccessToken = jwtService.generateAccessToken(user.id.toHexString())
         val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString())
 
-        storeRefreshToken(user.id, newRefreshToken)
+        refreshTokenService.storeRefreshToken(user.id, newRefreshToken)
 
         return Tokens(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken
-        )
-    }
-
-    private fun storeRefreshToken(userId: ObjectId, rawRefreshToken: String){
-        val hashed = hashToken(rawRefreshToken)
-        val expiryMs = jwtService.refreshTokenValidityMs
-        val expiresAt = Instant.now().plusMillis(expiryMs)
-
-       refreshTokenRepository.save(
-            RefreshToken(
-                userId = userId,
-                expiresAt = expiresAt,
-                hashedToken = hashed
-            )
         )
     }
 

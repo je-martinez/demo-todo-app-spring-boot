@@ -1,7 +1,7 @@
 package com.je_martinez.demo.controllers
 
 import com.je_martinez.demo.features.todos.dtos.TodoRequest
-import com.je_martinez.demo.features.todos.dtos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
 import com.je_martinez.demo.features.todos.guards.TodoOwnershipGuard
 import com.je_martinez.demo.utils.TodoMockUtils
 import com.ninjasquad.springmockk.MockkBean

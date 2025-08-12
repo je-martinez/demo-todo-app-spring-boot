@@ -3,7 +3,7 @@ package com.je_martinez.demo.features.todos
 import com.je_martinez.demo.database.models.Todo
 import com.je_martinez.demo.database.repository.TodoRepository
 import com.je_martinez.demo.features.todos.dtos.TodoRequest
-import com.je_martinez.demo.features.todos.dtos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
 import com.je_martinez.demo.features.todos.exceptions.TodoExceptions
 import com.je_martinez.demo.features.todos.services.TodoService
 import com.je_martinez.demo.utils.TodoMockUtils

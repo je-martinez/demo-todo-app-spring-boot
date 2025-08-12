@@ -4,8 +4,8 @@ import com.je_martinez.demo.features.authentication.annotations.current_user.Cur
 import com.je_martinez.demo.swagger.annotations.SwaggerDefaultResponses
 import com.je_martinez.demo.features.todos.swagger.SwaggerTodoResponse
 import com.je_martinez.demo.features.todos.swagger.SwaggerTodosResponse
-import com.je_martinez.demo.features.todos.dtos.TodoRequest
-import com.je_martinez.demo.features.todos.dtos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.requests.TodoRequest
+import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
 import com.je_martinez.demo.features.todos.services.TodoService
 import com.je_martinez.demo.features.authentication.validators.HexString
 import io.swagger.v3.oas.annotations.Operation

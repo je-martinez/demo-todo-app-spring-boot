@@ -1,4 +1,4 @@
-package com.je_martinez.demo.features.todos.dtos
+package com.je_martinez.demo.features.todos.dtos.responses
 
 import com.je_martinez.demo.database.models.Todo
 import java.time.Instant

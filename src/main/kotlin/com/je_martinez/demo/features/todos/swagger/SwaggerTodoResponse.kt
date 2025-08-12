@@ -1,6 +1,6 @@
 package com.je_martinez.demo.features.todos.swagger
 
-import com.je_martinez.demo.features.todos.dtos.TodoResponse
+import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
