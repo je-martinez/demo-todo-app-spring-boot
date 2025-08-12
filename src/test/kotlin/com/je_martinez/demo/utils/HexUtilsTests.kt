@@ -1,5 +1,6 @@
 package com.je_martinez.demo.utils
 
+import com.je_martinez.demo.features.authentication.utils.HexUtils
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf

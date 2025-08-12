@@ -1,11 +1,11 @@
 package com.je_martinez.demo.controllers
 
 import com.je_martinez.demo.database.models.User
-import com.je_martinez.demo.dtos.authentication.AuthRequest
-import com.je_martinez.demo.dtos.authentication.RefreshRequest
-import com.je_martinez.demo.features.authentication.AuthService
-import com.je_martinez.demo.utils.HashEncoder
-import com.je_martinez.demo.utils.JwtUtils
+import com.je_martinez.demo.features.authentication.dtos.requests.AuthRequest
+import com.je_martinez.demo.features.authentication.dtos.requests.RefreshRequest
+import com.je_martinez.demo.features.authentication.services.AuthService
+import com.je_martinez.demo.features.authentication.utils.HashEncoder
+import com.je_martinez.demo.features.authentication.utils.JwtUtils
 import io.jsonwebtoken.security.Keys
 import io.mockk.every
 import io.mockk.verify

@@ -1,7 +1,8 @@
 package com.je_martinez.demo.features.authentication
 
-import com.je_martinez.demo.exceptions.TokenExceptions
-import com.je_martinez.demo.utils.JwtUtils
+import com.je_martinez.demo.features.authentication.exceptions.TokenExceptions
+import com.je_martinez.demo.features.authentication.services.JwtService
+import com.je_martinez.demo.features.authentication.utils.JwtUtils
 import com.ninjasquad.springmockk.SpykBean
 import io.mockk.every
 import io.mockk.verify

@@ -1,6 +1,7 @@
 package com.je_martinez.demo.utils
 
 import com.je_martinez.demo.database.models.User
+import com.je_martinez.demo.features.authentication.utils.HashEncoder
 
 object AuthenticationMockUtils {
     fun generateUsers(size: Int): List<MockUser> {

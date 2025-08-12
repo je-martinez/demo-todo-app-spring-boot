@@ -1,8 +1,8 @@
 package com.je_martinez.demo.controllers
 
-import com.je_martinez.demo.dtos.todos.TodoRequest
-import com.je_martinez.demo.dtos.todos.TodoResponse
-import com.je_martinez.demo.guards.TodoOwnershipGuard
+import com.je_martinez.demo.features.todos.dtos.TodoRequest
+import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
+import com.je_martinez.demo.features.todos.guards.TodoOwnershipGuard
 import com.je_martinez.demo.utils.TodoMockUtils
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
