@@ -11,6 +11,7 @@
     "dev": "tsc -w",
     "local:run": "node --loader ts-node/esm --project tsconfig.node.json src/local-run.ts",
     "deploy": "./scripts/deploy-localstack.sh",
+    "deploy:prod": "./scripts/deploy-production.sh",
     "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip . && cd .. && zip -r dist.zip node_modules",
     "clean": "rm -rf dist dist.zip"
   },
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "pino": "^9.0.0",
-    "pino-pretty": "^11.0.0"
+    "pino-pretty": "^11.0.0",
+    "mongodb": "^6.3.0"
   }
 }

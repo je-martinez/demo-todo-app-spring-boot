@@ -16,7 +16,8 @@ NODE_ENV=production,\
 LOG_LEVEL=info,\
 APP_ENV=dev,\
 FEATURE_FLAG_X=true,\
-API_BASE_URL=https://api.example.test\
+API_BASE_URL=https://api.example.test,\
+MONGODB_URI=mongodb://mongodb:27017/ListifyDatabase\
 }"
 
 echo "-> Build TypeScript"

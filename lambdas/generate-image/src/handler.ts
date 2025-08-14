@@ -1,11 +1,21 @@
 // src/handler.ts
 import type { SQSBatchItemFailure, SQSHandler } from "aws-lambda";
 import { logger } from "./logger";
+import { DatabaseHandler } from "./database";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
 
   logger.info({ records: event.Records.length }, "SQS batch received");
+
+  const databaseHandler = new DatabaseHandler();
+
+  try {
+    await databaseHandler.connect();
+  } catch (error) {
+    logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to connect to MongoDB');
+    throw error;
+  }
 
   await Promise.all(
     event.Records.map(async (record) => {

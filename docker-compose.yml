@@ -1,5 +1,9 @@
 version: "3.8"
 
+networks:
+  listify-network:
+    driver: bridge
+
 services:
   redis:
     image: redis:7.2-alpine
@@ -11,11 +15,24 @@ services:
       - ./scripts/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: unless-stopped
+    networks:
+      - listify-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27016:27017"
+    volumes:
+      - mongodb-data:/data/db
+    restart: unless-stopped
+    networks:
+      - listify-network
 
   localstack:
     image: localstack/localstack:latest
     ports:
-      - "4566:4566"    # endpoint unificado
+      - "4566:4566"
       - "4510-4559:4510-4559"
     environment:
       - SERVICES=sqs,iam,lambda,logs,cloudwatch
@@ -25,7 +42,11 @@ services:
     volumes:
       - "localstack-data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
+    networks:
+      - listify-network
 
 volumes:
   redis-data:
+  mongodb-data:
   localstack-data:
