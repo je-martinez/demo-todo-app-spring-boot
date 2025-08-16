@@ -23,8 +23,9 @@
     "typescript": "^5.5.0"
   },
   "dependencies": {
+    "@google/genai": "^1.14.0",
+    "mongodb": "^6.3.0",
     "pino": "^9.0.0",
-    "pino-pretty": "^11.0.0",
-    "mongodb": "^6.3.0"
+    "pino-pretty": "^11.0.0"
   }
 }
