@@ -19,7 +19,7 @@ class AuthenticationController(
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Register user endpoint")
-    fun register(@Valid @RequestBody body: AuthRequest){ authService.register(body.email, body.password) }
+    fun register(@Valid @RequestBody body: AuthRequest) = authService.register(body.email, body.password)
 
     @PostMapping("/login")
     @Operation(summary = "Log in endpoint")
