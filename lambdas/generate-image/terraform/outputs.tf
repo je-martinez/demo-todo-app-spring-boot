@@ -19,7 +19,39 @@ output "lambda_function_arn" {
   value       = aws_lambda_function.sqs_lambda.arn
 }
 
+output "s3_bucket_name" {
+  description = "Name of the S3 bucket"
+  value       = aws_s3_bucket.image_bucket.bucket
+}
+
+output "s3_bucket_url" {
+  description = "URL of the S3 bucket"
+  value       = "http://localhost:4566/${aws_s3_bucket.image_bucket.bucket}"
+}
+
+output "s3_bucket_arn" {
+  description = "ARN of the S3 bucket"
+  value       = aws_s3_bucket.image_bucket.arn
+}
+
 output "aws_sqs_send_message" {
   description = "Example SQS message"
-  value       = "awslocal sqs send-message --queue-url ${aws_sqs_queue.demo_queue.url} --message-body '{\"userId\":\"123\",\"action\":\"welcome\"}'"
+  value       = <<EOT
+awslocal sqs send-message --queue-url ${aws_sqs_queue.demo_queue.url} --message-body '{"userId":"123","action":"welcome"}'
+EOT
+}
+
+output "aws_s3_upload_example" {
+  description = "Example S3 upload command"
+  value       = <<EOT
+awslocal s3 cp ../assets/image.png s3://${aws_s3_bucket.image_bucket.bucket}/image.png
+EOT
+}
+
+output "aws_s3_view_example" {
+  description = "Example S3 view command"
+  value       = <<EOT
+# View in browser: http://localhost:4566/${aws_s3_bucket.image_bucket.bucket}/image.png
+# Or use: awslocal s3 ls s3://${aws_s3_bucket.image_bucket.bucket}/
+EOT
 }

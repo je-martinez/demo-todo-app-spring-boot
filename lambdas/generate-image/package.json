@@ -13,7 +13,9 @@
     "deploy": "./scripts/deploy-localstack.sh",
     "destroy": "./scripts/destroy-localstack.sh",
     "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip . && cd .. && zip -r dist.zip node_modules",
-    "clean": "rm -rf dist dist.zip"
+    "clean": "rm -rf dist dist.zip",
+    "upload": "./scripts/upload-s3.sh",
+    "setup-s3": "./scripts/setup-s3-and-upload.sh"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.131",

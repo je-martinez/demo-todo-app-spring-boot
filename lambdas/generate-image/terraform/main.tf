@@ -25,6 +25,7 @@ provider "aws" {
     lambda = "http://localhost:4566"
     iam    = "http://localhost:4566"
     sqs    = "http://localhost:4566"
+    s3     = "http://localhost:4566"
   }
 }
 
@@ -51,4 +52,10 @@ variable "lambda_zip_path" {
   description = "Path to the Lambda function ZIP file"
   type        = string
   default     = "../dist.zip"
+}
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket"
+  type        = string
+  default     = "demo-image-bucket"
 }
