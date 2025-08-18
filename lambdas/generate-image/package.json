@@ -2,14 +2,10 @@
   "name": "sqs-lambda",
   "version": "1.0.0",
   "private": true,
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "local:run": "node --loader ts-node/esm --project tsconfig.node.json src/local-run.ts",
+    "local:run": "yarn build && node dist/local-run.js",
     "deploy": "./scripts/deploy-localstack.sh",
     "destroy": "./scripts/destroy-localstack.sh",
     "zip": "rm -f dist.zip && cd dist && zip -r ../dist.zip . && cd .. && zip -r dist.zip node_modules",

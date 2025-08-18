@@ -11,5 +11,6 @@ export const env = {
     }
     // Solo para desarrollo local
     return "mongodb://localhost:27017/ListifyDatabase";
-  })()
+  })(),
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY ?? ""
 };

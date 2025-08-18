@@ -2,6 +2,7 @@
 import type { SQSBatchItemFailure, SQSHandler } from "aws-lambda";
 import { logger } from "./logger";
 import { DatabaseHandler } from "./database";
+import { generateImage } from "./image-generator";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
@@ -28,18 +29,13 @@ export const handler: SQSHandler = async (event, _context) => {
           "Processing SQS message"
         );
 
-        // -------------------------------
-        // Tu lógica de negocio aquí
-        // Simulación: lanzar error si viene "fail": true
-        // -------------------------------
         if (payload.fail) {
           throw new Error("Forced failure for demo");
         }
 
-        // Ejemplo de lado-efecto:
-        // await doSomething(payload);
+        const imagePath = await generateImage(payload.prompt);
+        logger.info({ imagePath }, "Image generated");
 
-        logger.info({ messageId }, "Message processed OK");
       } catch (err: any) {
         logger.error(
           { err: err?.message, stack: err?.stack, messageId },
