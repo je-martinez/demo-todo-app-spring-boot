@@ -12,5 +12,11 @@ export const env = {
     // Solo para desarrollo local
     return "mongodb://localhost:27017/ListifyDatabase";
   })(),
-  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY ?? ""
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY ?? "",
+  // S3 Configuration
+  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ?? "demo-todo-app-images",
+  S3_REGION: process.env.S3_REGION ?? "us-east-1",
+  AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID ?? "",
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+  AWS_ENDPOINT_URL: process.env.AWS_ENDPOINT_URL ?? undefined, // For LocalStack
 };

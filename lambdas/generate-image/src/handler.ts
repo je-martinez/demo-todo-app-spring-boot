@@ -3,6 +3,7 @@ import type { SQSBatchItemFailure, SQSHandler } from "aws-lambda";
 import { logger } from "./logger";
 import { DatabaseHandler } from "./database";
 import { generateImage } from "./image-generator";
+import { S3Service } from "./s3-service";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
@@ -10,6 +11,7 @@ export const handler: SQSHandler = async (event, _context) => {
   logger.info({ records: event.Records.length }, "SQS batch received");
 
   const databaseHandler = new DatabaseHandler();
+  const s3Service = new S3Service();
 
   try {
     await databaseHandler.connect();
@@ -33,8 +35,29 @@ export const handler: SQSHandler = async (event, _context) => {
           throw new Error("Forced failure for demo");
         }
 
+        // Step 1: Generate image
         const imagePath = await generateImage(payload.prompt);
         logger.info({ imagePath }, "Image generated");
+
+        // Step 2: Upload generated image to S3
+        const s3Key = payload.s3Key || `generated-image-${Date.now()}.png`;
+        const contentType = payload.contentType || "image/png";
+        
+        logger.info({ messageId, s3Key, contentType }, "Uploading generated image to S3");
+        
+        const s3Url = await s3Service.uploadFileFromPath(
+          imagePath,
+          s3Key,
+          contentType
+        );
+
+        logger.info({ 
+          messageId, 
+          prompt: payload.prompt,
+          imagePath, 
+          s3Key,
+          s3Url 
+        }, "Image generated and uploaded successfully");
 
       } catch (err: any) {
         logger.error(

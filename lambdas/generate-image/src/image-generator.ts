@@ -8,7 +8,7 @@ const ai = new GoogleGenAI({
 
 export const generateImage = async (prompt: string) => {
     const resp = await ai.models.generateContent({
-    model: "gemini-2.0-flash-preview-image-generation",
+        model: "gemini-2.0-flash-preview-image-generation",
         contents: prompt,
         config: { responseModalities: [Modality.TEXT, Modality.IMAGE] }
     });
