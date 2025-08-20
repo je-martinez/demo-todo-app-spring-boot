@@ -4,6 +4,7 @@ import { logger } from "./logger";
 import { DatabaseHandler } from "./database";
 import { generateImage } from "./image-generator";
 import { S3Service } from "./s3-service";
+import { appendCoverImageToTodo, getTodoById, markCoverImageAsFailed } from "./todos";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
@@ -35,11 +36,21 @@ export const handler: SQSHandler = async (event, _context) => {
           throw new Error("Forced failure for demo");
         }
 
+        const todo = await getTodoById(payload.todoId, databaseHandler);
+
         // Step 1: Generate image
-        const imagePath = await generateImage(payload.prompt);
+        const imagePath = await generateImage(todo.title);
+
+        // Step 2 <FAILED>: If image generation fails, mark the cover image as failed
+        if (!imagePath) {
+          logger.error({ messageId, todoId: todo._id }, "Failed to generate image");
+          await markCoverImageAsFailed(todo, databaseHandler);
+          return;
+        }
+
         logger.info({ imagePath }, "Image generated");
 
-        // Step 2: Upload generated image to S3
+        // Step 2 <OK>: Upload generated image to S3
         const s3Key = payload.s3Key || `generated-image-${Date.now()}.png`;
         const contentType = payload.contentType || "image/png";
         
@@ -51,13 +62,16 @@ export const handler: SQSHandler = async (event, _context) => {
           contentType
         );
 
+        await appendCoverImageToTodo(todo, s3Url, databaseHandler);
+
         logger.info({ 
           messageId, 
-          prompt: payload.prompt,
+          todoId: todo._id,
+          todoTitle: todo.title,
           imagePath, 
           s3Key,
           s3Url 
-        }, "Image generated and uploaded successfully");
+        }, "Image generated and uploaded successfully for Todo (title: " + todo.title + ") with id: " + todo._id);
 
       } catch (err: any) {
         logger.error(
