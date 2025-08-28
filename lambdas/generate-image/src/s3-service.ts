@@ -113,6 +113,11 @@ export class S3Service {
    * @returns string - S3 URL
    */
   private generateS3Url(s3Key: string): string {
+
+    if(env.NODE_ENV === "local") {
+      return `http://localhost:4566/${env.S3_BUCKET_NAME}/${s3Key}`;
+    }
+
     if (env.AWS_ENDPOINT_URL) {
       // LocalStack URL
       return `${env.AWS_ENDPOINT_URL}/${env.S3_BUCKET_NAME}/${s3Key}`;

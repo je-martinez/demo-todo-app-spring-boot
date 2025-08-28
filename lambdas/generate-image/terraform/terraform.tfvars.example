@@ -12,7 +12,7 @@ role_name = "lambda-exec-role"
 s3_bucket_name = "demo-image-bucket"
 
 lambda_environment = {
-  NODE_ENV              = "production"
+  NODE_ENV              = "local"
   LOG_LEVEL             = "info"
   APP_ENV               = "dev"
   MONGODB_URI           = "mongodb://mongodb:27017/ListifyDatabase"
