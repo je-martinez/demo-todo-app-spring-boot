@@ -1,0 +1,25 @@
+# Lambda Function Configuration
+lambda_name     = "sqs-ts-lambda"
+lambda_zip_path = "../dist.zip"
+
+# SQS Queue Configuration
+queue_name = "demo-queue"
+
+# IAM Role Configuration
+role_name = "lambda-exec-role"
+
+# S3 Bucket Configuration
+s3_bucket_name = "demo-image-bucket"
+
+lambda_environment = {
+  NODE_ENV              = "production"
+  LOG_LEVEL             = "info"
+  APP_ENV               = "dev"
+  MONGODB_URI           = "mongodb://mongodb:27017/ListifyDatabase"
+  GOOGLE_API_KEY        = "A VALID API KEY"
+  S3_BUCKET_NAME        = "demo-image-bucket"
+  S3_REGION             = "us-east-1"
+  AWS_ACCESS_KEY_ID     = "test"
+  AWS_SECRET_ACCESS_KEY = "test"
+  AWS_ENDPOINT_URL      = "http://localstack:4566"
+}

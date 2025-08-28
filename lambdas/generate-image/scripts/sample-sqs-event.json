@@ -3,7 +3,7 @@
     {
       "messageId": "11111111-1111-1111-1111-111111111111",
       "receiptHandle": "abc",
-      "body": "{\"userId\":\"u1\",\"action\":\"welcome\",\"todoId\":\"68a552352ca10624dfe2bb5c\"}",
+      "body": "{\"userId\":\"u1\",\"action\":\"welcome\",\"todoId\":\"68a55e7d66150b70f09bded4\"}",
       "attributes": { "ApproximateReceiveCount": "1" },
       "messageAttributes": {},
       "md5OfBody": "x",

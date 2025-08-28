@@ -59,3 +59,19 @@ variable "s3_bucket_name" {
   type        = string
   default     = "demo-image-bucket"
 }
+
+variable "lambda_environment" {
+  description = "Environment variables for the Lambda function"
+  type = object({
+    NODE_ENV              = string
+    LOG_LEVEL             = string
+    APP_ENV               = string
+    MONGODB_URI           = string
+    GOOGLE_API_KEY        = string
+    S3_BUCKET_NAME        = string
+    S3_REGION             = string
+    AWS_ACCESS_KEY_ID     = string
+    AWS_SECRET_ACCESS_KEY = string
+    AWS_ENDPOINT_URL      = string
+  })
+}

@@ -5,6 +5,7 @@ import { DatabaseHandler } from "./database";
 import { generateImage } from "./image-generator";
 import { S3Service } from "./s3-service";
 import { appendCoverImageToTodo, getTodoById, markCoverImageAsFailed } from "./todos";
+import fs from "node:fs";
 
 export const handler: SQSHandler = async (event, _context) => {
   const failures: SQSBatchItemFailure[] = [];
@@ -48,6 +49,20 @@ export const handler: SQSHandler = async (event, _context) => {
           return;
         }
 
+        // Validate that the generated image file exists and is accessible
+        try {
+          const fs = await import('node:fs');
+          if (!fs.existsSync(imagePath)) {
+            logger.error({ messageId, todoId: todo._id, imagePath }, "Generated image file not found");
+            await markCoverImageAsFailed(todo, databaseHandler);
+            return;
+          }
+        } catch (validationError) {
+          logger.error({ messageId, todoId: todo._id, imagePath, error: validationError }, "Failed to validate generated image file");
+          await markCoverImageAsFailed(todo, databaseHandler);
+          return;
+        }
+
         logger.info({ imagePath }, "Image generated");
 
         // Step 2 <OK>: Upload generated image to S3
@@ -63,6 +78,14 @@ export const handler: SQSHandler = async (event, _context) => {
         );
 
         await appendCoverImageToTodo(todo, s3Url, databaseHandler);
+
+        // Clean up temporary file after successful upload
+        try {
+          fs.unlinkSync(imagePath);
+          logger.info({ imagePath }, "Temporary image file cleaned up");
+        } catch (cleanupError) {
+          logger.warn({ imagePath, error: cleanupError }, "Failed to clean up temporary file");
+        }
 
         logger.info({ 
           messageId, 

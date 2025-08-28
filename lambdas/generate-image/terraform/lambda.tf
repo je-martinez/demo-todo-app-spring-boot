@@ -5,18 +5,11 @@ resource "aws_lambda_function" "sqs_lambda" {
   role          = aws_iam_role.lambda_exec_role.arn
   handler       = "handler.handler"
   runtime       = "nodejs20.x"
-  timeout       = 30
-  memory_size   = 256
+  timeout       = 60
+  memory_size   = 512
 
   environment {
-    variables = {
-      NODE_ENV       = "production"
-      LOG_LEVEL      = "info"
-      APP_ENV        = "dev"
-      FEATURE_FLAG_X = "true"
-      API_BASE_URL   = "https://api.example.test"
-      MONGODB_URI    = "mongodb://mongodb:27017/ListifyDatabase"
-    }
+    variables = var.lambda_environment
   }
 
   depends_on = [aws_iam_role_policy_attachment.lambda_basic_execution]

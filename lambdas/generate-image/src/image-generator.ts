@@ -9,11 +9,17 @@ const ai = new GoogleGenAI({
 
 export const generateImage = async (prompt: string) => {
     try {
+
+        const contents = `Generate an image for the title, use a flat design style: ${prompt}`;
+
+        logger.info({ contents }, "Generating image");
+
         const resp = await ai.models.generateContent({
             model: "gemini-2.0-flash-preview-image-generation",
-            contents: `Generate an image for the title, use a flat design style: ${prompt}`,
+            contents,
             config: { responseModalities: [Modality.TEXT, Modality.IMAGE] }
         });
+
         return saveAsFile(resp, "image.png");
     } catch (error) {
         logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to generate image');
@@ -22,13 +28,32 @@ export const generateImage = async (prompt: string) => {
 }
 
 const saveAsFile = (resp: any, filename: string) => {
-    fs.mkdirSync("output", { recursive: true });
-    const filePath = path.join("output", filename);
+    try {
+        // Use /tmp directory which is writable in Lambda functions
+        const outputDir = "/tmp";
+        const filePath = path.join(outputDir, filename);
 
-    for (const part of resp.candidates[0].content.parts) {
-        if (part.inlineData) {
-            fs.writeFileSync(filePath, Buffer.from(part.inlineData.data, "base64"));
+        // Validate response structure
+        if (!resp?.candidates?.[0]?.content?.parts) {
+            throw new Error('Invalid response structure from Google AI API');
         }
+
+        let imageDataFound = false;
+        for (const part of resp.candidates[0].content.parts) {
+            if (part.inlineData?.data) {
+                fs.writeFileSync(filePath, Buffer.from(part.inlineData.data, "base64"));
+                imageDataFound = true;
+                break;
+            }
+        }
+
+        if (!imageDataFound) {
+            throw new Error('No image data found in API response');
+        }
+
+        return filePath;
+    } catch (error) {
+        logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to save image file');
+        throw error;
     }
-    return filePath;
 }
