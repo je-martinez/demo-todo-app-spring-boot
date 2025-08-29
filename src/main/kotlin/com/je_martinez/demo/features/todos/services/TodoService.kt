@@ -7,6 +7,7 @@ import com.je_martinez.demo.features.todos.dtos.requests.TodoRequest
 import com.je_martinez.demo.features.todos.dtos.responses.TodoResponse
 import com.je_martinez.demo.features.todos.dtos.responses.toResponse
 import com.je_martinez.demo.features.todos.exceptions.TodoExceptions
+import com.je_martinez.demo.sqs.services.SqsService
 import org.bson.types.ObjectId
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.CachePut
@@ -18,6 +19,7 @@ import java.time.Instant
 @Service
 class TodoService(
     private val repository: TodoRepository,
+    private val sqsService: SqsService
 ) {
 
     @Cacheable(value = [TodosCacheSettings.COUNT_KEY])
@@ -43,13 +45,15 @@ class TodoService(
         ]
     )
     fun create(input: TodoRequest, ownerId: String): TodoResponse {
-        return repository.save(
+        val response = repository.save(
             Todo(
                 title = input.title,
                 description = input.description,
                 ownerId = ObjectId(ownerId),
             )
         ).toResponse()
+        sendMessageForImageGeneration(response.id)
+        return response
     }
 
     @Caching(
@@ -123,4 +127,14 @@ class TodoService(
             todo.copy(completed = false, completedAt = null)
         ).toResponse()
     }
+
+    private fun sendMessageForImageGeneration(todoId
+                                              : String){
+        sqsService.sendMessage(
+            mapOf(
+                "todoId" to todoId
+            )
+        )
+    }
+
 }
