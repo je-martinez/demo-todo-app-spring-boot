@@ -40,7 +40,7 @@ export const handler: SQSHandler = async (event, _context) => {
         const todo = await getTodoById(payload.todoId, databaseHandler);
 
         // Step 1: Generate image
-        const imagePath = await generateImage(todo.title);
+        const imagePath = await generateImage(todo.title, todo._id.toString());
 
         // Step 2 <FAILED>: If image generation fails, mark the cover image as failed
         if (!imagePath) {
@@ -51,7 +51,6 @@ export const handler: SQSHandler = async (event, _context) => {
 
         // Validate that the generated image file exists and is accessible
         try {
-          const fs = await import('node:fs');
           if (!fs.existsSync(imagePath)) {
             logger.error({ messageId, todoId: todo._id, imagePath }, "Generated image file not found");
             await markCoverImageAsFailed(todo, databaseHandler);
@@ -66,7 +65,7 @@ export const handler: SQSHandler = async (event, _context) => {
         logger.info({ imagePath }, "Image generated");
 
         // Step 2 <OK>: Upload generated image to S3
-        const s3Key = payload.s3Key || `generated-image-${Date.now()}.png`;
+        const s3Key = `${todo._id.toString()}.png`;
         const contentType = payload.contentType || "image/png";
         
         logger.info({ messageId, s3Key, contentType }, "Uploading generated image to S3");
@@ -85,7 +84,7 @@ export const handler: SQSHandler = async (event, _context) => {
           const thumbnailPath = await generateThumbnail(imagePath);
           
           // Upload thumbnail to S3
-          const thumbnailS3Key = `thumbnails/${s3Key.replace('generated-image-', 'thumbnail-')}`;
+          const thumbnailS3Key = `thumbnails/${s3Key}`;
           logger.info({ messageId, thumbnailS3Key }, "Uploading thumbnail to S3");
           
           thumbnailUrl = await s3Service.uploadFileFromPath(

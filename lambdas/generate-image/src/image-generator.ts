@@ -8,7 +8,14 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_API_KEY,
 });
 
-export const generateImage = async (prompt: string) => {
+
+/**
+ * Generate an image using the Google AI API
+ * @param prompt - The prompt to generate the image
+ * @param todoId - The id of the todo
+ * @returns Promise<string> - Path to the saved image
+ */
+export const generateImage = async (prompt: string, todoId: string) => {
     try {
 
         const contents = `Generate an image for the title, use a flat design style: ${prompt}`;
@@ -21,13 +28,19 @@ export const generateImage = async (prompt: string) => {
             config: { responseModalities: [Modality.TEXT, Modality.IMAGE] }
         });
 
-        return saveAsFile(resp, "image.png");
+        return saveAsFile(resp, `${todoId}.png`);
     } catch (error) {
         logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to generate image');
         return null;
     }
 }
 
+/**
+ * Save the image to a file
+ * @param resp - The response from the Google AI API
+ * @param filename - The filename to save the image to
+ * @returns Promise<string> - Path to the saved image
+ */
 const saveAsFile = (resp: any, filename: string) => {
     try {
         // Use /tmp directory which is writable in Lambda functions
