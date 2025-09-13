@@ -1,6 +1,7 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import fs from "node:fs";
 import path from "node:path";
+import sharp from "sharp";
 import { logger } from "./logger";
 
 const ai = new GoogleGenAI({
@@ -54,6 +55,59 @@ const saveAsFile = (resp: any, filename: string) => {
         return filePath;
     } catch (error) {
         logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to save image file');
+        throw error;
+    }
+}
+
+/**
+ * Generate a thumbnail from an existing image using Sharp
+ * @param imagePath - Path to the source image
+ * @param thumbnailPath - Path where the thumbnail should be saved
+ * @param width - Thumbnail width (default: 300)
+ * @param height - Thumbnail height (default: 300)
+ * @returns Promise<string> - Path to the generated thumbnail
+ */
+export const generateThumbnail = async (
+    imagePath: string, 
+    thumbnailPath?: string, 
+    width: number = 300, 
+    height: number = 300
+): Promise<string> => {
+    try {
+        // Use /tmp directory which is writable in Lambda functions
+        const outputDir = "/tmp";
+        const finalThumbnailPath = thumbnailPath || path.join(outputDir, `thumbnail-${Date.now()}.png`);
+
+        logger.info({ 
+            imagePath, 
+            thumbnailPath: finalThumbnailPath, 
+            width, 
+            height 
+        }, "Generating thumbnail");
+
+        await sharp(imagePath)
+            .resize(width, height, {
+                fit: 'cover',
+                position: 'center'
+            })
+            .png({ quality: 80 })
+            .toFile(finalThumbnailPath);
+
+        logger.info({ 
+            thumbnailPath: finalThumbnailPath,
+            width,
+            height 
+        }, "Thumbnail generated successfully");
+
+        return finalThumbnailPath;
+    } catch (error) {
+        logger.error({ 
+            error: error instanceof Error ? error.message : String(error),
+            imagePath,
+            thumbnailPath,
+            width,
+            height
+        }, 'Failed to generate thumbnail');
         throw error;
     }
 }

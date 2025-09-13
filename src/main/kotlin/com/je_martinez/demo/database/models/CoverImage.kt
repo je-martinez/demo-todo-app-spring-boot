@@ -5,5 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Field
 data class CoverImage(
     @Field(write = Field.Write.ALWAYS)
     val uri: String? = null,
+    val thumbnailUri: String? = null,
     val state: CoverImageState
 )

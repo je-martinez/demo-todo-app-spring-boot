@@ -2,7 +2,7 @@
 import type { SQSBatchItemFailure, SQSHandler } from "aws-lambda";
 import { logger } from "./logger";
 import { DatabaseHandler } from "./database";
-import { generateImage } from "./image-generator";
+import { generateImage, generateThumbnail } from "./image-generator";
 import { S3Service } from "./s3-service";
 import { appendCoverImageToTodo, getTodoById, markCoverImageAsFailed } from "./todos";
 import fs from "node:fs";
@@ -77,7 +77,41 @@ export const handler: SQSHandler = async (event, _context) => {
           contentType
         );
 
-        await appendCoverImageToTodo(todo, s3Url, databaseHandler);
+        // Step 3: Generate thumbnail
+        let thumbnailUrl: string | null = null;
+        try {
+          logger.info({ messageId, imagePath }, "Generating thumbnail");
+          
+          const thumbnailPath = await generateThumbnail(imagePath);
+          
+          // Upload thumbnail to S3
+          const thumbnailS3Key = `thumbnails/${s3Key.replace('generated-image-', 'thumbnail-')}`;
+          logger.info({ messageId, thumbnailS3Key }, "Uploading thumbnail to S3");
+          
+          thumbnailUrl = await s3Service.uploadFileFromPath(
+            thumbnailPath,
+            thumbnailS3Key,
+            "image/png"
+          );
+          
+          // Clean up temporary thumbnail file
+          try {
+            fs.unlinkSync(thumbnailPath);
+            logger.info({ thumbnailPath }, "Temporary thumbnail file cleaned up");
+          } catch (cleanupError) {
+            logger.warn({ thumbnailPath, error: cleanupError }, "Failed to clean up temporary thumbnail file");
+          }
+          
+          logger.info({ messageId, thumbnailUrl }, "Thumbnail generated and uploaded successfully");
+        } catch (thumbnailError) {
+          logger.error({ 
+            messageId, 
+            error: thumbnailError instanceof Error ? thumbnailError.message : String(thumbnailError) 
+          }, "Failed to generate thumbnail, continuing without thumbnail");
+          // Continue without thumbnail - don't fail the entire process
+        }
+
+        await appendCoverImageToTodo(todo, s3Url, thumbnailUrl, databaseHandler);
 
         // Clean up temporary file after successful upload
         try {
@@ -93,8 +127,9 @@ export const handler: SQSHandler = async (event, _context) => {
           todoTitle: todo.title,
           imagePath, 
           s3Key,
-          s3Url 
-        }, "Image generated and uploaded successfully for Todo (title: " + todo.title + ") with id: " + todo._id);
+          s3Url,
+          thumbnailUrl
+        }, "Image and thumbnail generated and uploaded successfully for Todo (title: " + todo.title + ") with id: " + todo._id);
 
       } catch (err: any) {
         logger.error(

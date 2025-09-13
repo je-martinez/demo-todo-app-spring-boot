@@ -128,8 +128,7 @@ class TodoService(
         ).toResponse()
     }
 
-    private fun sendMessageForImageGeneration(todoId
-                                              : String){
+    private fun sendMessageForImageGeneration(todoId: String){
         sqsService.sendMessage(
             mapOf(
                 "todoId" to todoId

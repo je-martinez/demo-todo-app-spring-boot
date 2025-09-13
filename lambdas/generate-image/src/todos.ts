@@ -14,6 +14,7 @@ type Todo = {
 
  type CoverImage = {
     uri: string | null;
+    thumbnailUri: string | null;
     state: CoverImageState;
 }
 
@@ -29,9 +30,10 @@ export const getTodoById = async (todoId: string, databaseHandler: DatabaseHandl
     return todo;
 }
 
-export const appendCoverImageToTodo = async (todo: Todo, imageUrl: string, databaseHandler: DatabaseHandler) => { 
+export const appendCoverImageToTodo = async (todo: Todo, imageUrl: string, thumbnailUrl: string | null, databaseHandler: DatabaseHandler) => { 
     const coverImage: CoverImage = {
         uri: imageUrl,
+        thumbnailUri: thumbnailUrl,
         state: 'OK'
     }
     await databaseHandler.getCollection<Todo>(TODO_COLLECTION).updateOne(
@@ -45,6 +47,7 @@ export const appendCoverImageToTodo = async (todo: Todo, imageUrl: string, datab
 export const markCoverImageAsFailed = async (todo: Todo, databaseHandler: DatabaseHandler) => {
     const coverImage: CoverImage = {
         uri: null,
+        thumbnailUri: null,
         state: 'FAILED'
     }
     await databaseHandler.getCollection<Todo>(TODO_COLLECTION).updateOne({ _id: todo._id }, { $set: { cover: coverImage } });
