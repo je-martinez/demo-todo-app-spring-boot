@@ -5,6 +5,7 @@ import { DatabaseHandler } from "./database";
 import { generateImage, generateThumbnail } from "./image-generator";
 import { S3Service } from "./s3-service";
 import { appendCoverImageToTodo, getTodoById, markCoverImageAsFailed } from "./todos";
+import { generateBlurhash } from "./blurhash-generator";
 import fs from "node:fs";
 
 export const handler: SQSHandler = async (event, _context) => {
@@ -110,7 +111,21 @@ export const handler: SQSHandler = async (event, _context) => {
           // Continue without thumbnail - don't fail the entire process
         }
 
-        await appendCoverImageToTodo(todo, s3Url, thumbnailUrl, databaseHandler);
+        // Step 4: Generate blurhash for the image
+        let blurhash: string | null = null;
+        try {
+          logger.info({ messageId, imagePath }, "Generating blurhash for image");
+          blurhash = await generateBlurhash(imagePath);
+          logger.info({ messageId, blurhash }, "Blurhash generated successfully");
+        } catch (blurhashError) {
+          logger.error({ 
+            messageId, 
+            error: blurhashError instanceof Error ? blurhashError.message : String(blurhashError) 
+          }, "Failed to generate blurhash, continuing without blurhash");
+          // Continue without blurhash - don't fail the entire process
+        }
+
+        await appendCoverImageToTodo(todo, s3Url, thumbnailUrl, blurhash, databaseHandler);
 
         // Clean up temporary file after successful upload
         try {
@@ -127,8 +142,9 @@ export const handler: SQSHandler = async (event, _context) => {
           imagePath, 
           s3Key,
           s3Url,
-          thumbnailUrl
-        }, "Image and thumbnail generated and uploaded successfully for Todo (title: " + todo.title + ") with id: " + todo._id);
+          thumbnailUrl,
+          blurhash
+        }, "Image, thumbnail and blurhash generated and uploaded successfully for Todo (title: " + todo.title + ") with id: " + todo._id);
 
       } catch (err: any) {
         logger.error(
