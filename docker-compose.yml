@@ -1,3 +1,5 @@
+version: "3.8"
+
 networks:
   listify-network:
     driver: bridge
@@ -36,10 +38,14 @@ services:
     environment:
       - SERVICES=sqs,iam,lambda,logs,cloudwatch
       - DEBUG=1
-      - LAMBDA_EXECUTOR=docker
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      # - LAMBDA_EXECUTOR=docker
+      # - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=podman
+      - PODMAN_HOST=unix:///run/user/1000/podman/podman.sock
+      - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
     volumes:
       - "localstack-data:/var/lib/localstack"
+      - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock"
     restart: unless-stopped
     networks:
       - listify-network
