@@ -9,11 +9,12 @@ import {
   heroEye,
   heroEyeSlash
 } from '@ng-icons/heroicons/outline';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgIconComponent, LoadingSpinnerComponent],
   providers: [provideIcons({ heroEnvelope, heroLockClosed, heroEye, heroEyeSlash })],
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css']
