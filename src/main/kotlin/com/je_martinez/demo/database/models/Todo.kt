@@ -26,5 +26,6 @@ data class Todo(
     @Indexed(name = "createdAt_idx") val createdAt: Instant = Instant.now(),
     val completedAt: Instant? = null,
     @Indexed(name = "completed_idx") val completed: Boolean = false,
+    val cover: CoverImage = CoverImage(uri = null, state = CoverImageState.PROVISIONING),
     @Id val id: ObjectId = ObjectId()
 )

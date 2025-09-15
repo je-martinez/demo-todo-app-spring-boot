@@ -1,6 +1,6 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.spring") version "2.1.10"
 	id("org.springframework.boot") version "3.4.4"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -30,6 +30,11 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation(platform("aws.sdk.kotlin:bom:1.4.119"))
+    implementation("aws.sdk.kotlin:sqs")
+    implementation("aws.sdk.kotlin:secretsmanager")
+    implementation("aws.smithy.kotlin:http-client-engine-okhttp")
+    implementation("aws.smithy.kotlin:http-client-engine-crt")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

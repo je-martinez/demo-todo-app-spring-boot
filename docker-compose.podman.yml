@@ -14,7 +14,7 @@ services:
       - redis-data:/data
       - ./scripts/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
-    restart: always
+    restart: unless-stopped
     networks:
       - listify-network
 
@@ -25,7 +25,7 @@ services:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
-    restart: always
+    restart: unless-stopped
     networks:
       - listify-network
 
@@ -38,13 +38,13 @@ services:
     environment:
       - SERVICES=sqs,iam,lambda,logs,cloudwatch
       - DEBUG=1
-      - LAMBDA_EXECUTOR=docker
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=podman
+      - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
       - PERSISTENCE=1
     volumes:
       - "localstack-data:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    restart: always
+      - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock"
+    restart: unless-stopped
     networks:
       - listify-network
 
