@@ -1,0 +1,105 @@
+# Angular Development Rules
+
+## Project Context
+This is an Angular 18+ project with:
+- Standalone components
+- Server-Side Rendering (SSR)
+- Zoneless change detection
+- TypeScript
+- Tailwind CSS 4 for styling
+
+## Code Style & Best Practices
+
+### Angular Components
+- Use standalone components by default
+- Prefer composition over inheritance
+- Use OnPush change detection strategy when possible
+- Keep components focused and single-responsibility
+- Use reactive forms over template-driven forms
+- Implement proper TypeScript typing
+
+### File Organization
+- One component per file
+- Use barrel exports (index.ts) for clean imports
+- Group related files in feature modules
+- Keep services in a dedicated services folder
+
+### TypeScript
+- Use strict mode
+- Prefer interfaces over types for object shapes
+- Use proper typing for all variables and functions
+- Avoid `any` type, use `unknown` or proper typing instead
+
+### CSS/Styling
+- Use Tailwind CSS 4 utility classes for styling
+- Prefer Tailwind utilities over custom CSS when possible
+- Use CSS custom properties for theming when needed
+- Follow Tailwind's design system and spacing scale
+- Keep custom CSS minimal and component-scoped when necessary
+- Use Tailwind's responsive design utilities (sm:, md:, lg:, xl:, 2xl:)
+- Leverage Tailwind's color palette and design tokens
+
+### Performance
+- Use OnPush change detection
+- Implement lazy loading for routes
+- Use trackBy functions in *ngFor
+- Optimize bundle size with tree shaking
+
+### Testing
+- Write unit tests for components and services
+- Use Angular Testing Utilities
+- Mock external dependencies
+- Aim for high test coverage
+
+### Code Generation
+- Use Angular CLI for generating components, services, etc.
+- Follow Angular naming conventions
+- Use proper file naming (kebab-case for files)
+
+## Common Patterns
+
+### Service Injection
+```typescript
+constructor(private service: MyService) {}
+```
+
+### Component Structure
+```typescript
+@Component({
+  selector: 'app-component',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './component.html',
+  styleUrls: ['./component.css']
+})
+export class MyComponent implements OnInit {
+  // Component logic
+}
+```
+
+### Reactive Forms
+```typescript
+form = this.fb.group({
+  field: ['', Validators.required]
+});
+```
+
+## Avoid
+- Using `any` type
+- Mutating objects directly (use immutability)
+- Heavy computations in templates
+- Circular dependencies
+- Deeply nested component hierarchies
+- Inline styles in templates (use CSS classes)
+
+## Security
+- Sanitize user input
+- Use Angular's built-in XSS protection
+- Validate all form inputs
+- Use HTTPS in production
+
+## Accessibility
+- Use semantic HTML elements
+- Add proper ARIA attributes
+- Ensure keyboard navigation works
+- Test with screen readers
