@@ -9,7 +9,7 @@ import {
   heroEye,
   heroEyeSlash
 } from '@ng-icons/heroicons/outline';
-import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner';
+import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-sign-up',
