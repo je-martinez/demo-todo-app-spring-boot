@@ -30,8 +30,6 @@ export class SignUpComponent {
     private router: Router
   ) {
     this.signUpForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
@@ -79,24 +77,6 @@ export class SignUpComponent {
 
   toggleConfirmPasswordVisibility() {
     this.showConfirmPassword.set(!this.showConfirmPassword());
-  }
-
-  get firstNameError() {
-    const firstName = this.signUpForm.get('firstName');
-    if (firstName?.touched && firstName?.errors) {
-      if (firstName.errors['required']) return 'First name is required';
-      if (firstName.errors['minlength']) return 'First name must be at least 2 characters';
-    }
-    return null;
-  }
-
-  get lastNameError() {
-    const lastName = this.signUpForm.get('lastName');
-    if (lastName?.touched && lastName?.errors) {
-      if (lastName.errors['required']) return 'Last name is required';
-      if (lastName.errors['minlength']) return 'Last name must be at least 2 characters';
-    }
-    return null;
   }
 
   get emailError() {
