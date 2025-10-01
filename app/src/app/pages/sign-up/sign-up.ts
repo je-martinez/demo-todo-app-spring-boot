@@ -59,6 +59,7 @@ export class SignUpComponent {
         const email = this.signUpForm.get('email')?.value;
         if (email) {
           this.router.navigate(['/sign-in'], { queryParams: { email: email } });
+          this.authFacade.clearRedirectToSignIn();
         }
       }
     });

@@ -256,6 +256,11 @@ export const AuthStore = signalStore(
       patchState(store, { error: null });
     },
 
+    // Clear redirectToSignIn action
+    clearRedirectToSignIn: () => {
+      patchState(store, { redirectToSignIn: false });
+    },
+
     // Set tokens manually (useful for initialization from localStorage)
     setTokens: (accessToken: string, refreshToken: string) => {
       try {

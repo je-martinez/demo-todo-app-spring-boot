@@ -122,6 +122,10 @@ export class AuthFacade {
     return null;
   }
 
+  clearRedirectToSignIn() {
+    this.authStore.clearRedirectToSignIn();
+  }
+
   // State snapshot helpers (for non-reactive access)
   getAuthStateSnapshot() {
     return {
