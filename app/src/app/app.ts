@@ -5,7 +5,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
-  imports: [RouterOutlet]
+  imports: [RouterOutlet],
 })
 export class App {
   protected readonly title = 'angular-app';

@@ -3,12 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  heroEnvelope,
-  heroLockClosed,
-  heroEye,
-  heroEyeSlash
-} from '@ng-icons/heroicons/outline';
+import { heroEnvelope, heroLockClosed, heroEye, heroEyeSlash } from '@ng-icons/heroicons/outline';
 import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spinner';
 
 @Component({
@@ -17,7 +12,7 @@ import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spi
   imports: [CommonModule, ReactiveFormsModule, NgIconComponent, LoadingSpinnerComponent],
   providers: [provideIcons({ heroEnvelope, heroLockClosed, heroEye, heroEyeSlash })],
   templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+  styleUrls: ['./sign-up.component.css'],
 })
 export class SignUpComponent {
   signUpForm: FormGroup;
@@ -29,11 +24,14 @@ export class SignUpComponent {
     private fb: FormBuilder,
     private router: Router
   ) {
-    this.signUpForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
+    this.signUpForm = this.fb.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   passwordMatchValidator(form: FormGroup) {

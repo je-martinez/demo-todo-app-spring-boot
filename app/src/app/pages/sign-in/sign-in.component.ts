@@ -3,12 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import {
-  heroEnvelope,
-  heroLockClosed,
-  heroEye,
-  heroEyeSlash
-} from '@ng-icons/heroicons/outline';
+import { heroEnvelope, heroLockClosed, heroEye, heroEyeSlash } from '@ng-icons/heroicons/outline';
 import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spinner';
 
 @Component({
@@ -17,7 +12,7 @@ import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spi
   imports: [CommonModule, ReactiveFormsModule, NgIconComponent, LoadingSpinnerComponent],
   providers: [provideIcons({ heroEnvelope, heroLockClosed, heroEye, heroEyeSlash })],
   templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.css']
+  styleUrls: ['./sign-in.component.css'],
 })
 export class SignInComponent {
   signInForm: FormGroup;
@@ -30,7 +25,7 @@ export class SignInComponent {
   ) {
     this.signInForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
