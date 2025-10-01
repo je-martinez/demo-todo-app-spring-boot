@@ -3,7 +3,7 @@ export type RegisterResponse = {
   email: string;
 };
 
-export type LoginResponse = {
+export type LoginOrRefreshTokenResponse = {
   accessToken: string;
   refreshToken: string;
 };

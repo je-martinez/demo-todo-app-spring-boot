@@ -1,10 +1,15 @@
 import { Routes } from '@angular/router';
+import { ROUTE_METADATA } from './config/route-metadata.config';
 
 export const routes: Routes = [
   {
     path: 'sign-in',
     loadComponent: () =>
       import('@layouts/sign-in-layout/sign-in-layout.component').then(m => m.SignInLayoutComponent),
+    title: ROUTE_METADATA.SIGN_IN.title,
+    data: {
+      meta: ROUTE_METADATA.SIGN_IN,
+    },
     children: [
       {
         path: '',
@@ -17,6 +22,10 @@ export const routes: Routes = [
     path: 'sign-up',
     loadComponent: () =>
       import('@layouts/sign-in-layout/sign-in-layout.component').then(m => m.SignInLayoutComponent),
+    title: ROUTE_METADATA.SIGN_UP.title,
+    data: {
+      meta: ROUTE_METADATA.SIGN_UP,
+    },
     children: [
       {
         path: '',
