@@ -1,0 +1,25 @@
+@if (hasError) {
+<div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+  <div class="flex items-start justify-between">
+    <div class="flex-1">
+      <p class="text-sm font-medium text-red-800 mb-2">{{ errorMessage }}</p>
+      @if (errorList.length > 1 || (errorList.length === 1 && errorList[0] !== errorMessage)) {
+      <ul class="text-sm text-red-600 space-y-1">
+        @for (error of errorList; track error) {
+        <li class="flex items-start">
+          <span class="mr-2">•</span>
+          <span>{{ error }}</span>
+        </li>
+        }
+      </ul>
+      }
+    </div>
+    @if (showCloseButton) {
+    <button type="button" (click)="onClearError()"
+      class="text-red-400 hover:text-red-600 transition duration-200 ml-2 flex-shrink-0">
+      <ng-icon name="heroXMark" class="h-4 w-4"></ng-icon>
+    </button>
+    }
+  </div>
+</div>
+}

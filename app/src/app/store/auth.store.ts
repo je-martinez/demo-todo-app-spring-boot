@@ -6,12 +6,17 @@ import { AuthApi } from '@app/api/auth-api';
 import { UserJWTDecoded } from '@app/types';
 import { decodeJwt } from '@app/utils';
 
+export interface ApiError {
+  message: string;
+  errors: string[];
+}
+
 export interface AuthState {
   user: UserJWTDecoded | null;
   accessToken: string | null;
   refreshToken: string | null;
   isLoading: boolean;
-  error: string | null;
+  error: ApiError | null;
 }
 
 const initialState: AuthState = {
@@ -53,9 +58,42 @@ export const AuthStore = signalStore(
               return response;
             }),
             catchError(error => {
+              let parsedError: ApiError;
+              try {
+                // Try to parse the error response as structured error
+                const errorResponse = error.error;
+                if (errorResponse && errorResponse.message) {
+                  // Handle case with message and errors array
+                  if (Array.isArray(errorResponse.errors)) {
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: errorResponse.errors,
+                    };
+                  } else {
+                    // Handle case with message but no errors array
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: [errorResponse.message],
+                    };
+                  }
+                } else {
+                  // Fallback to simple error message
+                  parsedError = {
+                    message: error.message || 'Login failed',
+                    errors: [error.message || 'Login failed'],
+                  };
+                }
+              } catch {
+                // If parsing fails, create a simple error
+                parsedError = {
+                  message: error.message || 'Login failed',
+                  errors: [error.message || 'Login failed'],
+                };
+              }
+
               patchState(store, {
                 isLoading: false,
-                error: error.message || 'Login failed',
+                error: parsedError,
               });
               return of(null);
             })
@@ -78,9 +116,42 @@ export const AuthStore = signalStore(
               return response;
             }),
             catchError(error => {
+              let parsedError: ApiError;
+              try {
+                // Try to parse the error response as structured error
+                const errorResponse = error.error;
+                if (errorResponse && errorResponse.message) {
+                  // Handle case with message and errors array
+                  if (Array.isArray(errorResponse.errors)) {
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: errorResponse.errors,
+                    };
+                  } else {
+                    // Handle case with message but no errors array
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: [errorResponse.message],
+                    };
+                  }
+                } else {
+                  // Fallback to simple error message
+                  parsedError = {
+                    message: error.message || 'Registration failed',
+                    errors: [error.message || 'Registration failed'],
+                  };
+                }
+              } catch {
+                // If parsing fails, create a simple error
+                parsedError = {
+                  message: error.message || 'Registration failed',
+                  errors: [error.message || 'Registration failed'],
+                };
+              }
+
               patchState(store, {
                 isLoading: false,
-                error: error.message || 'Registration failed',
+                error: parsedError,
               });
               return of(null);
             })
@@ -90,7 +161,7 @@ export const AuthStore = signalStore(
     ),
 
     // Refresh token action
-    refreshToken: rxMethod<void>(c$ =>
+    refreshAuthToken: rxMethod<void>(c$ =>
       c$.pipe(
         tap(() => patchState(store, { isLoading: true, error: null })),
         switchMap(() => {
@@ -98,7 +169,10 @@ export const AuthStore = signalStore(
           if (!refreshToken) {
             patchState(store, {
               isLoading: false,
-              error: 'No refresh token available',
+              error: {
+                message: 'No refresh token available',
+                errors: ['No refresh token available'],
+              },
             });
             return of(null);
           }
@@ -116,9 +190,42 @@ export const AuthStore = signalStore(
               return response;
             }),
             catchError(error => {
+              let parsedError: ApiError;
+              try {
+                // Try to parse the error response as structured error
+                const errorResponse = error.error;
+                if (errorResponse && errorResponse.message) {
+                  // Handle case with message and errors array
+                  if (Array.isArray(errorResponse.errors)) {
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: errorResponse.errors,
+                    };
+                  } else {
+                    // Handle case with message but no errors array
+                    parsedError = {
+                      message: errorResponse.message,
+                      errors: [errorResponse.message],
+                    };
+                  }
+                } else {
+                  // Fallback to simple error message
+                  parsedError = {
+                    message: error.message || 'Token refresh failed',
+                    errors: [error.message || 'Token refresh failed'],
+                  };
+                }
+              } catch {
+                // If parsing fails, create a simple error
+                parsedError = {
+                  message: error.message || 'Token refresh failed',
+                  errors: [error.message || 'Token refresh failed'],
+                };
+              }
+
               patchState(store, {
                 isLoading: false,
-                error: error.message || 'Token refresh failed',
+                error: parsedError,
                 user: null,
                 accessToken: null,
                 refreshToken: null,
@@ -158,16 +265,22 @@ export const AuthStore = signalStore(
         });
       } catch (error) {
         patchState(store, {
-          error: 'Invalid token format',
+          error: {
+            message: 'Invalid token format',
+            errors: ['Invalid token format'],
+          },
         });
       }
     },
-
+  })),
+  withMethods(store => ({
     // Check if token needs refresh and refresh if necessary
     ensureValidToken: () => {
       const isExpired = store.isTokenExpired();
       if (isExpired && store.refreshToken()) {
-        store.refreshToken();
+        // Trigger refresh by calling the rxMethod
+        // Note: This will trigger the refresh asynchronously
+        store.refreshAuthToken();
       }
     },
   }))

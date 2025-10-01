@@ -13,8 +13,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () =>
-          import('@pages/sign-in/sign-in.component').then(m => m.SignInComponent),
+        loadComponent: () => import('@pages/sign-in/sign-in').then(m => m.SignInComponent),
       },
     ],
   },
@@ -29,8 +28,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () =>
-          import('@pages/sign-up/sign-up.component').then(m => m.SignUpComponent),
+        loadComponent: () => import('@pages/sign-up/sign-up').then(m => m.SignUpComponent),
       },
     ],
   },

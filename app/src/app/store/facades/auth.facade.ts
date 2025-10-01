@@ -1,5 +1,5 @@
 import { Injectable, computed, inject } from '@angular/core';
-import { AuthStore } from '../auth.store';
+import { AuthStore, ApiError } from '../auth.store';
 import { UserJWTDecoded } from '@app/types';
 
 @Injectable({
@@ -39,7 +39,7 @@ export class AuthFacade {
   }
 
   refreshAuthToken() {
-    return this.authStore.refreshToken();
+    return this.authStore.refreshAuthToken();
   }
 
   clearError() {
@@ -84,11 +84,19 @@ export class AuthFacade {
 
   // Error handling helpers
   getErrorMessage(): string | null {
-    return this.error();
+    return this.error()?.message || null;
+  }
+
+  getErrorList(): string[] {
+    return this.error()?.errors || [];
   }
 
   hasSpecificError(errorMessage: string): boolean {
-    return this.error()?.includes(errorMessage) || false;
+    const error = this.error();
+    if (!error) return false;
+    return (
+      error.message.includes(errorMessage) || error.errors.some(err => err.includes(errorMessage))
+    );
   }
 
   // Loading state helpers
@@ -121,6 +129,8 @@ export class AuthFacade {
       refreshToken: this.refreshToken(),
       isLoading: this.isLoading(),
       error: this.error(),
+      errorMessage: this.getErrorMessage(),
+      errorList: this.getErrorList(),
       isAuthenticated: this.isAuthenticated(),
       isTokenExpired: this.isTokenExpired(),
       userEmail: this.userEmail(),
