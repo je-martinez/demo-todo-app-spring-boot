@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './loading-spinner.html',
   styleUrl: './loading-spinner.css',
 })
-export class LoadingSpinnerComponent {
+export class LoadingSpinner {
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() color: string = 'text-white';
   @Input() showText: boolean = false;

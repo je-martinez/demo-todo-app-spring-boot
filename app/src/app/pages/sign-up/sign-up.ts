@@ -1,6 +1,12 @@
 import { Component, signal, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -10,26 +16,19 @@ import {
   heroEyeSlash,
   heroXMark,
 } from '@ng-icons/heroicons/outline';
-import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spinner';
-import { ErrorDisplayComponent } from '@components/error-display/error-display';
+import { LoadingSpinner } from '@components/loading-spinner/loading-spinner';
+import { ErrorDisplay } from '@components/error-display/error-display';
 import { AuthFacade } from '@app/store/facades/auth.facade';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgIconComponent,
-    LoadingSpinnerComponent,
-    ErrorDisplayComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, NgIconComponent, LoadingSpinner, ErrorDisplay],
   providers: [provideIcons({ heroEnvelope, heroLockClosed, heroEye, heroEyeSlash, heroXMark })],
   templateUrl: './sign-up.html',
 })
-export class SignUpComponent {
+export class SignUp {
   private readonly authFacade = inject(AuthFacade);
-  private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
 
   signUpForm: FormGroup;
@@ -42,14 +41,15 @@ export class SignUpComponent {
   readonly redirectToSignIn = this.authFacade.redirectToSignIn;
 
   constructor() {
-    this.signUpForm = this.fb.group(
+    this.signUpForm = new FormGroup(
       {
-        email: ['', [Validators.required, Validators.email]],
-        password: [
-          '',
-          [Validators.required, Validators.minLength(9), this.passwordPatternValidator],
-        ],
-        confirmPassword: ['', [Validators.required]],
+        email: new FormControl('', [Validators.required, Validators.email]),
+        password: new FormControl('', [
+          Validators.required,
+          Validators.minLength(9),
+          this.passwordPatternValidator,
+        ]),
+        confirmPassword: new FormControl('', [Validators.required]),
       },
       { validators: this.passwordMatchValidator }
     );
@@ -79,7 +79,8 @@ export class SignUpComponent {
     return null;
   }
 
-  passwordMatchValidator(form: FormGroup) {
+  passwordMatchValidator(control: AbstractControl) {
+    const form = control as FormGroup;
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
 

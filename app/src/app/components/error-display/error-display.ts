@@ -11,7 +11,7 @@ import { ApiError } from '@app/store/auth.store';
   providers: [provideIcons({ heroXMark })],
   templateUrl: './error-display.html',
 })
-export class ErrorDisplayComponent {
+export class ErrorDisplay {
   @Input() error: ApiError | null = null;
   @Input() showCloseButton: boolean = true;
   @Output() clearError = new EventEmitter<void>();

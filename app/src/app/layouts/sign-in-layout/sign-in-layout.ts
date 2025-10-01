@@ -6,9 +6,8 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-sign-in-layout',
   standalone: true,
   imports: [CommonModule, RouterOutlet],
-  templateUrl: './sign-in-layout.component.html',
-  styleUrls: ['./sign-in-layout.component.css'],
+  templateUrl: './sign-in-layout.html',
 })
-export class SignInLayoutComponent {
+export class SignInLayout {
   // Layout component for sign-in pages
 }

@@ -1,6 +1,6 @@
 import { Component, signal, inject, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
@@ -10,26 +10,19 @@ import {
   heroEyeSlash,
   heroXMark,
 } from '@ng-icons/heroicons/outline';
-import { LoadingSpinnerComponent } from '@components/loading-spinner/loading-spinner';
-import { ErrorDisplayComponent } from '@components/error-display/error-display';
+import { LoadingSpinner } from '@components/loading-spinner/loading-spinner';
+import { ErrorDisplay } from '@components/error-display/error-display';
 import { AuthFacade } from '@app/store/facades/auth.facade';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgIconComponent,
-    LoadingSpinnerComponent,
-    ErrorDisplayComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, NgIconComponent, LoadingSpinner, ErrorDisplay],
   providers: [provideIcons({ heroEnvelope, heroLockClosed, heroEye, heroEyeSlash, heroXMark })],
   templateUrl: './sign-in.html',
 })
-export class SignInComponent {
+export class SignIn {
   private readonly authFacade = inject(AuthFacade);
-  private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -45,15 +38,19 @@ export class SignInComponent {
     // Get email from query parameters
     const emailFromQuery = this.route.snapshot.queryParams['email'] || '';
 
-    this.signInForm = this.fb.group({
-      email: [emailFromQuery, [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(9), this.passwordPatternValidator]],
+    this.signInForm = new FormGroup({
+      email: new FormControl(emailFromQuery, [Validators.required, Validators.email]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(9),
+        this.passwordPatternValidator,
+      ]),
     });
 
     // Effect to handle navigation when login is successful
     effect(() => {
       if (this.isAuthenticated() && !this.isLoading()) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/your-tasks']);
       }
     });
   }
