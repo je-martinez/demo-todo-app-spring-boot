@@ -126,6 +126,15 @@ export class AuthFacade {
     this.authStore.clearRedirectToSignIn();
   }
 
+  // Session persistence methods
+  initializeFromStorage() {
+    return this.authStore.initializeFromStorage();
+  }
+
+  clearSession() {
+    this.authStore.clearSession();
+  }
+
   // State snapshot helpers (for non-reactive access)
   getAuthStateSnapshot() {
     return {

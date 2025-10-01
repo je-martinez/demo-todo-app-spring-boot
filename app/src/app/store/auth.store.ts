@@ -5,6 +5,7 @@ import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AuthApi } from '@app/api/auth-api';
 import { UserJWTDecoded } from '@app/types';
 import { decodeJwt } from '@app/utils';
+import { StorageService } from '@app/services';
 
 export interface ApiError {
   message: string;
@@ -41,7 +42,7 @@ export const AuthStore = signalStore(
     }),
     userEmail: computed(() => store.user()?.sub || null),
   })),
-  withMethods((store, authApi = inject(AuthApi)) => ({
+  withMethods((store, authApi = inject(AuthApi), storageService = inject(StorageService)) => ({
     // Login action
     login: rxMethod<{ email: string; password: string }>(c$ =>
       c$.pipe(
@@ -50,6 +51,16 @@ export const AuthStore = signalStore(
           authApi.login(email, password).pipe(
             map(response => {
               const decodedToken = decodeJwt(response.accessToken) as UserJWTDecoded;
+
+              // Store session data in localStorage
+              const sessionExpiry = decodedToken.exp * 1000; // Convert to milliseconds
+              storageService.storeSession({
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken,
+                userData: decodedToken,
+                sessionExpiry,
+              });
+
               patchState(store, {
                 user: decodedToken,
                 accessToken: response.accessToken,
@@ -183,6 +194,16 @@ export const AuthStore = signalStore(
           return authApi.refreshToken(refreshToken).pipe(
             map(response => {
               const decodedToken = decodeJwt(response.accessToken) as UserJWTDecoded;
+
+              // Store updated session data in localStorage
+              const sessionExpiry = decodedToken.exp * 1000; // Convert to milliseconds
+              storageService.storeSession({
+                accessToken: response.accessToken,
+                refreshToken: response.refreshToken,
+                userData: decodedToken,
+                sessionExpiry,
+              });
+
               patchState(store, {
                 user: decodedToken,
                 accessToken: response.accessToken,
@@ -242,6 +263,9 @@ export const AuthStore = signalStore(
 
     // Logout action
     logout: () => {
+      // Clear session data from localStorage
+      storageService.clearSession();
+
       patchState(store, {
         user: null,
         accessToken: null,
@@ -265,6 +289,16 @@ export const AuthStore = signalStore(
     setTokens: (accessToken: string, refreshToken: string) => {
       try {
         const decodedToken = decodeJwt(accessToken) as UserJWTDecoded;
+
+        // Store session data in localStorage
+        const sessionExpiry = decodedToken.exp * 1000; // Convert to milliseconds
+        storageService.storeSession({
+          accessToken,
+          refreshToken,
+          userData: decodedToken,
+          sessionExpiry,
+        });
+
         patchState(store, {
           user: decodedToken,
           accessToken,
@@ -281,7 +315,7 @@ export const AuthStore = signalStore(
       }
     },
   })),
-  withMethods(store => ({
+  withMethods((store, storageService = inject(StorageService)) => ({
     // Check if token needs refresh and refresh if necessary
     ensureValidToken: () => {
       const isExpired = store.isTokenExpired();
@@ -290,6 +324,40 @@ export const AuthStore = signalStore(
         // Note: This will trigger the refresh asynchronously
         store.refreshAuthToken();
       }
+    },
+
+    // Initialize store from localStorage
+    initializeFromStorage: () => {
+      const sessionData = storageService.getSession();
+      if (sessionData && storageService.hasValidSession()) {
+        // Check if token is still valid (not expired)
+        const now = Date.now();
+        if (sessionData.sessionExpiry > now) {
+          patchState(store, {
+            user: sessionData.userData,
+            accessToken: sessionData.accessToken,
+            refreshToken: sessionData.refreshToken,
+            error: null,
+          });
+          return true;
+        } else {
+          // Session expired, clear it
+          storageService.clearSession();
+        }
+      }
+      return false;
+    },
+
+    // Clear session and localStorage
+    clearSession: () => {
+      storageService.clearSession();
+      patchState(store, {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        isLoading: false,
+        error: null,
+      });
     },
   }))
 );
