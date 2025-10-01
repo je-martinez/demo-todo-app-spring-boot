@@ -14,6 +14,7 @@ export class AuthFacade {
   readonly refreshToken = this.authStore.refreshToken;
   readonly isLoading = this.authStore.isLoading;
   readonly error = this.authStore.error;
+  readonly redirectToSignIn = this.authStore.redirectToSignIn;
 
   // Computed selectors - derived state
   readonly isAuthenticated = this.authStore.isAuthenticated;

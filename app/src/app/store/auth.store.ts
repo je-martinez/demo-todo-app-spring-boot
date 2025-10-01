@@ -17,6 +17,7 @@ export interface AuthState {
   refreshToken: string | null;
   isLoading: boolean;
   error: ApiError | null;
+  redirectToSignIn: boolean;
 }
 
 const initialState: AuthState = {
@@ -25,6 +26,7 @@ const initialState: AuthState = {
   refreshToken: null,
   isLoading: false,
   error: null,
+  redirectToSignIn: false,
 };
 
 export const AuthStore = signalStore(
@@ -112,6 +114,7 @@ export const AuthStore = signalStore(
               patchState(store, {
                 isLoading: false,
                 error: null,
+                redirectToSignIn: true,
               });
               return response;
             }),

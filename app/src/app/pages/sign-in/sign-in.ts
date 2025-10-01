@@ -1,7 +1,7 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import { Component, signal, inject, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import {
   heroEnvelope,
@@ -31,6 +31,7 @@ export class SignInComponent {
   private readonly authFacade = inject(AuthFacade);
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   signInForm: FormGroup;
   showPassword = signal(false);
@@ -41,9 +42,19 @@ export class SignInComponent {
   readonly isAuthenticated = this.authFacade.isAuthenticated;
 
   constructor() {
+    // Get email from query parameters
+    const emailFromQuery = this.route.snapshot.queryParams['email'] || '';
+
     this.signInForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: [emailFromQuery, [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(9), this.passwordPatternValidator]],
+    });
+
+    // Effect to handle navigation when login is successful
+    effect(() => {
+      if (this.isAuthenticated() && !this.isLoading()) {
+        this.router.navigate(['/']);
+      }
     });
   }
 
@@ -61,24 +72,15 @@ export class SignInComponent {
     return null;
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.signInForm.valid) {
       const { email, password } = this.signInForm.value;
 
       // Clear any existing errors before attempting login
       this.clearError();
 
-      try {
-        await this.authFacade.login(email, password);
-
-        // Check if authentication was successful
-        if (this.isAuthenticated()) {
-          this.router.navigate(['/']);
-        }
-      } catch (error) {
-        // Error handling is managed by the auth facade
-        console.error('Login failed:', error);
-      }
+      // Trigger the login
+      this.authFacade.login(email, password);
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.signInForm.controls).forEach(key => {

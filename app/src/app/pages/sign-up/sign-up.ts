@@ -1,4 +1,4 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import { Component, signal, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -39,7 +39,7 @@ export class SignUpComponent {
   // Use auth facade state instead of local loading state
   readonly isLoading = this.authFacade.isLoading;
   readonly error = this.authFacade.error;
-  readonly isAuthenticated = this.authFacade.isAuthenticated;
+  readonly redirectToSignIn = this.authFacade.redirectToSignIn;
 
   constructor() {
     this.signUpForm = this.fb.group(
@@ -53,6 +53,15 @@ export class SignUpComponent {
       },
       { validators: this.passwordMatchValidator }
     );
+
+    effect(() => {
+      if (this.redirectToSignIn() && !this.isLoading()) {
+        const email = this.signUpForm.get('email')?.value;
+        if (email) {
+          this.router.navigate(['/sign-in'], { queryParams: { email: email } });
+        }
+      }
+    });
   }
 
   passwordPatternValidator(control: any) {
@@ -81,24 +90,15 @@ export class SignUpComponent {
     return null;
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.signUpForm.valid) {
       const { email, password } = this.signUpForm.value;
 
       // Clear any existing errors before attempting registration
       this.clearError();
 
-      try {
-        await this.authFacade.register(email, password);
-
-        // Check if authentication was successful
-        if (this.isAuthenticated()) {
-          this.router.navigate(['/sign-in', { email }]);
-        }
-      } catch (error) {
-        // Error handling is managed by the auth facade
-        console.error('Registration failed:', error);
-      }
+      // Trigger the registration
+      this.authFacade.register(email, password);
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.signUpForm.controls).forEach(key => {
