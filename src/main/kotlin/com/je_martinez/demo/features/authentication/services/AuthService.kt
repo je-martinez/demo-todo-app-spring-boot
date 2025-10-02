@@ -40,8 +40,8 @@ class AuthService(
 
         if(!HashEncoder.matches(password, user.hashedPassword)) throw AuthExceptions.invalidCredentials()
 
-        val newAccessToken = jwtService.generateAccessToken(user.id.toHexString())
-        val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString())
+        val newAccessToken = jwtService.generateAccessToken(user.id.toHexString(), user.email)
+        val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString(), user.email)
 
         refreshTokenService.storeRefreshToken(user.id, newRefreshToken)
 
@@ -67,8 +67,8 @@ class AuthService(
             user.id, hashed
         )
 
-        val newAccessToken = jwtService.generateAccessToken(user.id.toHexString())
-        val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString())
+        val newAccessToken = jwtService.generateAccessToken(user.id.toHexString(), user.email)
+        val newRefreshToken = jwtService.generateRefreshToken(user.id.toHexString(), user.email)
 
         refreshTokenService.storeRefreshToken(user.id, newRefreshToken)
 

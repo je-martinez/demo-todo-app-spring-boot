@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
-import { ApiError } from '@app/store/auth.store';
+import { ApiError } from '@app/types';
 
 @Component({
   selector: 'app-error-display',

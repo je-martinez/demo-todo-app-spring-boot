@@ -1,6 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
-import { AuthStore, ApiError } from '../auth.store';
-import { UserJWTDecoded } from '@app/types';
+import { AuthStore } from '../auth.store';
+import { UserJWTDecoded, ApiError } from '@app/types';
 
 @Injectable({
   providedIn: 'root',

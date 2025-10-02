@@ -29,6 +29,7 @@ class JwtService(
 
     private fun generateToken(
         userId: String,
+        email: String,
         type: TokenType,
         expiry: Long,
     ):String{
@@ -40,7 +41,8 @@ class JwtService(
             issuedAt = now,
             expiration = expiryDate,
             claims = mapOf(
-                "type" to type
+                "type" to type,
+                "email" to email
             ),
         )
     }
@@ -53,12 +55,12 @@ class JwtService(
         return JwtUtils.extractPayload(secretKey, rawToken)
     }
 
-    fun generateAccessToken(userId: String):String{
-        return generateToken(userId, TokenType.TOKEN, accessTokenValidityMs)
+    fun generateAccessToken(userId: String, email: String):String{
+        return generateToken(userId, email, TokenType.TOKEN, accessTokenValidityMs)
     }
 
-    fun generateRefreshToken(userId: String):String{
-        return generateToken(userId, TokenType.REFRESH_TOKEN, refreshTokenValidityMs)
+    fun generateRefreshToken(userId: String, email: String):String{
+        return generateToken(userId, email, TokenType.REFRESH_TOKEN, refreshTokenValidityMs)
     }
 
     private fun validateToken(token:String, tokenType:String): Boolean{

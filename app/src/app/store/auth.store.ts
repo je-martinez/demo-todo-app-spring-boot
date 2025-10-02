@@ -4,13 +4,9 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import { AuthApi } from '@app/api/auth-api';
 import { UserJWTDecoded } from '@app/types';
+import { ApiError } from '@app/types';
 import { decodeJwt } from '@app/utils';
 import { StorageService } from '@app/services';
-
-export interface ApiError {
-  message: string;
-  errors: string[];
-}
 
 export interface AuthState {
   user: UserJWTDecoded | null;
@@ -40,7 +36,8 @@ export const AuthStore = signalStore(
       if (!user) return true;
       return Date.now() >= user.exp * 1000;
     }),
-    userEmail: computed(() => store.user()?.sub || null),
+    userId: computed(() => store.user()?.sub || null),
+    userEmail: computed(() => store.user()?.email || null),
   })),
   withMethods((store, authApi = inject(AuthApi), storageService = inject(StorageService)) => ({
     // Login action
