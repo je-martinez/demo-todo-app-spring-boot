@@ -3,22 +3,32 @@
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Your Tasks</h1>
 
-      <!-- View Mode Toggle -->
-      <div class="flex bg-gray-100 rounded-lg p-1">
-        <button type="button" (click)="setViewMode('list')" [class]="currentView === 'list'
+      <!-- Add Task Button and View Mode Toggle -->
+      <div class="flex items-center gap-4">
+        <!-- Add Task Button -->
+        <button type="button"
+          class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <ng-icon name="heroPlus" class="-ml-1 mr-2 h-5 w-5"></ng-icon>
+          Add Task
+        </button>
+
+        <!-- View Mode Toggle -->
+        <div class="flex bg-gray-100 rounded-lg p-1">
+          <button type="button" (click)="setViewMode('list')" [class]="currentView === 'list'
             ? 'bg-white text-gray-900 shadow-sm'
             : 'text-gray-500 hover:text-gray-700'"
-          class="px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-0 active:outline-none">
-          <ng-icon name="heroBars3" class="w-4 h-4 mr-2 inline"></ng-icon>
-          List
-        </button>
-        <button type="button" (click)="setViewMode('calendar')" [class]="currentView === 'calendar'
+            class="px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-0 active:outline-none">
+            <ng-icon name="heroBars3" class="w-4 h-4 mr-2 inline"></ng-icon>
+            List
+          </button>
+          <button type="button" (click)="setViewMode('calendar')" [class]="currentView === 'calendar'
             ? 'bg-white text-gray-900 shadow-sm'
             : 'text-gray-500 hover:text-gray-700'"
-          class="px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-0 active:outline-none">
-          <ng-icon name="heroCalendarDays" class="w-4 h-4 mr-2 inline"></ng-icon>
-          Calendar
-        </button>
+            class="px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-0 active:outline-none">
+            <ng-icon name="heroCalendarDays" class="w-4 h-4 mr-2 inline"></ng-icon>
+            Calendar
+          </button>
+        </div>
       </div>
     </div>
 

@@ -17,6 +17,7 @@ This is an Angular 18+ project with:
 - Keep components focused and single-responsibility
 - Use reactive forms over template-driven forms
 - Implement proper TypeScript typing
+- **NEVER use "Component" suffix in class names** - Use descriptive names like `TaskListView`, `CalendarView`, `UserProfile` instead of `TaskListViewComponent`, `CalendarViewComponent`, `UserProfileComponent`
 
 ### File Organization
 - One component per file
@@ -91,6 +92,7 @@ form = this.fb.group({
 - Circular dependencies
 - Deeply nested component hierarchies
 - Inline styles in templates (use CSS classes)
+- **Adding "Component" suffix to class names** - Use clean, descriptive names without redundant suffixes
 
 ## Security
 - Sanitize user input

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { LoginOrRefreshTokenResponse, RegisterResponse } from '@app/types';
 import { environment } from '@environments/environment';
 
@@ -7,7 +7,7 @@ import { environment } from '@environments/environment';
   providedIn: 'root',
 })
 export class AuthApi {
-  constructor(private http: HttpClient) {}
+  http = inject(HttpClient);
 
   register(email: string, password: string) {
     return this.http.post<RegisterResponse>(`${environment.BASE_URL}/api/auth/register`, {

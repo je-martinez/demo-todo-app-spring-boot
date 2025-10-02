@@ -3,6 +3,8 @@ package com.je_martinez.demo.features.todos.dtos.requests
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.validation.constraints.NotBlank
+import java.time.OffsetDateTime
+import java.util.Date
 
 data class TodoRequest @JsonCreator constructor(
     @field:NotBlank(message = "Title can't be blank.")
@@ -10,4 +12,6 @@ data class TodoRequest @JsonCreator constructor(
     val title: String,
     @JsonProperty("description")
     val description: String,
+    @JsonProperty(value = "date")
+    val date: OffsetDateTime
 )

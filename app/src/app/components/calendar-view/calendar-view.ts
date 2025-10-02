@@ -10,4 +10,4 @@ import { heroCalendarDays, heroClock } from '@ng-icons/heroicons/outline';
   providers: [provideIcons({ heroCalendarDays, heroClock })],
   templateUrl: './calendar-view.html',
 })
-export class CalendarViewComponent {}
+export class CalendarView {}

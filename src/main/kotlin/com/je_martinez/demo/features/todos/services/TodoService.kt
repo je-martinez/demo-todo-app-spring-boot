@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.OffsetDateTime
 
 @Service
 class TodoService(
@@ -53,6 +54,7 @@ class TodoService(
                 title = input.title,
                 description = input.description,
                 ownerId = ObjectId(ownerId),
+                date = input.date
             )
         ).toResponse()
         sendMessageForImageGeneration(response.id)
@@ -76,6 +78,7 @@ class TodoService(
             existingTodo.copy(
                 title = input.title,
                 description = input.description,
+                date = input.date
             )
         ).toResponse()
     }
@@ -109,7 +112,7 @@ class TodoService(
             throw TodoExceptions.notFound(id)
         }
         return repository.save(
-            todo.copy(completed = true, completedAt = Instant.now())
+            todo.copy(completed = true, completedAt = OffsetDateTime.now())
         ).toResponse()
     }
 
