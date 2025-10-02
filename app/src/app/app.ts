@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -7,6 +7,4 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css',
   imports: [RouterOutlet],
 })
-export class App {
-  protected readonly title = 'angular-app';
-}
+export class App {}

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { AppFacade } from '@app/store/facades';
 
 @Component({
   selector: 'app-sign-in-layout',
@@ -9,5 +10,6 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './sign-in-layout.html',
 })
 export class SignInLayout {
-  // Layout component for sign-in pages
+  private readonly appFacade = inject(AppFacade);
+  public readonly isAppInitialized = this.appFacade.isReady;
 }

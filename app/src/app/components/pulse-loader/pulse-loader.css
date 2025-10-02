@@ -1,0 +1,133 @@
+/* Pulse Loader Component Styles */
+
+/* Custom pulse animation with different timing */
+@keyframes custom-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+/* Enhanced pulse animation for better visual effect */
+@keyframes enhanced-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+/* Bounce animation for bars variant */
+@keyframes bounce-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Wave animation for waves variant */
+@keyframes wave-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* Apply custom animations to specific variants */
+.pulse-loader-dots .animate-pulse {
+  animation: custom-pulse 1.5s ease-in-out infinite;
+}
+
+.pulse-loader-bars .animate-pulse {
+  animation: bounce-pulse 1.2s ease-in-out infinite;
+}
+
+.pulse-loader-waves .animate-pulse {
+  animation: wave-pulse 1.4s ease-in-out infinite;
+}
+
+/* Enhanced spinner animation for circles variant */
+.pulse-loader-circles .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive sizing */
+@media (max-width: 640px) {
+  .pulse-loader-container {
+    padding: 1rem;
+  }
+
+  .pulse-loader-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pulse-loader-overlay {
+    background-color: rgba(17, 24, 39, 0.8);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
+
+  .pulse-loader-dots .animate-pulse,
+  .pulse-loader-bars .animate-pulse,
+  .pulse-loader-waves .animate-pulse {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+/* Focus styles for accessibility */
+.pulse-loader:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .pulse-loader-overlay {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .pulse-loader-text {
+    font-weight: 600;
+  }
+}

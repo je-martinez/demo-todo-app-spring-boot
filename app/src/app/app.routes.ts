@@ -37,8 +37,18 @@ export const routes: Routes = [
   },
   {
     path: 'your-tasks',
-    loadComponent: () => import('@app/pages/your-tasks/your-tasks').then(m => m.YourTasks),
+    loadComponent: () => import('@app/layouts/main-layout/main-layout').then(m => m.MainLayout),
+    title: ROUTE_METADATA.YOUR_TASKS.title,
+    data: {
+      meta: ROUTE_METADATA.YOUR_TASKS,
+    },
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('@app/pages/your-tasks/your-tasks').then(m => m.YourTasks),
+      },
+    ],
   },
   {
     path: '',

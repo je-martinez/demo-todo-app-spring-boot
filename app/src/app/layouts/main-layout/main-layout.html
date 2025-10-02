@@ -1,0 +1,32 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header with logo and logout button -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo on the left -->
+        <div class="flex items-center">
+          <img src="/images/logo.webp" alt="Listify Logo" class="h-8 w-auto" />
+        </div>
+
+        <!-- User info and logout button on the right -->
+        <div class="flex items-center space-x-4">
+          <!-- User email display -->
+          <span class="text-sm text-gray-700 font-medium" *ngIf="isLoggedIn()">
+            {{ userEmail() }}
+          </span>
+
+          <!-- Logout button -->
+          <button (click)="logout()"
+            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content area -->
+  <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <router-outlet></router-outlet>
+  </main>
+</div>

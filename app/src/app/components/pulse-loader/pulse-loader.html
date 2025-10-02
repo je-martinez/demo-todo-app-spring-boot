@@ -1,0 +1,66 @@
+<div [class]="containerClasses">
+  <!-- Dots Variant -->
+  @if (variant === 'dots') {
+  <div class="flex space-x-2">
+    <div class="w-3 h-3 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'0ms'"></div>
+    <div class="w-3 h-3 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'150ms'"></div>
+    <div class="w-3 h-3 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'300ms'"></div>
+  </div>
+  }
+
+  <!-- Bars Variant -->
+  @if (variant === 'bars') {
+  <div class="flex space-x-1 items-end">
+    <div class="w-1 bg-current animate-pulse" [class]="pulseColorClasses" style="height: 20px; animation-delay: 0ms;">
+    </div>
+    <div class="w-1 bg-current animate-pulse" [class]="pulseColorClasses" style="height: 30px; animation-delay: 100ms;">
+    </div>
+    <div class="w-1 bg-current animate-pulse" [class]="pulseColorClasses" style="height: 25px; animation-delay: 200ms;">
+    </div>
+    <div class="w-1 bg-current animate-pulse" [class]="pulseColorClasses" style="height: 35px; animation-delay: 300ms;">
+    </div>
+    <div class="w-1 bg-current animate-pulse" [class]="pulseColorClasses" style="height: 20px; animation-delay: 400ms;">
+    </div>
+  </div>
+  }
+
+  <!-- Circles Variant -->
+  @if (variant === 'circles') {
+  <div class="relative">
+    <div class="w-8 h-8 rounded-full border-4 border-transparent animate-spin"
+      [class]="'border-t-current ' + colorClasses" style="border-top-color: currentColor;"></div>
+    <div class="absolute inset-0 w-8 h-8 rounded-full border-4 border-transparent animate-spin"
+      [class]="'border-r-current ' + colorClasses"
+      style="border-right-color: currentColor; animation-delay: 150ms; animation-duration: 0.8s;"></div>
+  </div>
+  }
+
+  <!-- Squares Variant -->
+  @if (variant === 'squares') {
+  <div class="flex space-x-1">
+    <div class="w-3 h-3 animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'0ms'"></div>
+    <div class="w-3 h-3 animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'100ms'"></div>
+    <div class="w-3 h-3 animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'200ms'"></div>
+    <div class="w-3 h-3 animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'300ms'"></div>
+  </div>
+  }
+
+  <!-- Waves Variant -->
+  @if (variant === 'waves') {
+  <div class="flex space-x-1 items-center">
+    <div class="w-1 h-6 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'0ms'"></div>
+    <div class="w-1 h-8 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'100ms'"></div>
+    <div class="w-1 h-10 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'200ms'">
+    </div>
+    <div class="w-1 h-8 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'300ms'"></div>
+    <div class="w-1 h-6 rounded-full animate-pulse" [class]="pulseColorClasses" [style.animation-delay]="'400ms'"></div>
+  </div>
+  }
+
+  <!-- Loading Text -->
+  @if (showText) {
+  <div class="mt-4 font-medium animate-pulse" [class]="sizeClasses + ' ' + colorClasses">
+    {{ text }}
+  </div>
+  }
+</div>

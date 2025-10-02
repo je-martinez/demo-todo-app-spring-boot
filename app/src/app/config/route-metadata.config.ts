@@ -37,4 +37,19 @@ export const ROUTE_METADATA = {
     twitterDescription:
       'Create a new Listify account to start organizing your tasks and boosting your productivity.',
   } as RouteMetadata,
+
+  YOUR_TASKS: {
+    title: 'Your Tasks - Listify',
+    description:
+      'Manage and organize your tasks with Listify. Create, edit, and track your todo items to stay productive.',
+    keywords: 'tasks, todo, listify, productivity, organize, manage, todo list, task management',
+    ogTitle: 'Your Tasks - Listify',
+    ogDescription:
+      'Manage and organize your tasks with Listify. Create, edit, and track your todo items to stay productive.',
+    ogType: 'website',
+    twitterCard: 'summary',
+    twitterTitle: 'Your Tasks - Listify',
+    twitterDescription:
+      'Manage and organize your tasks with Listify. Create, edit, and track your todo items to stay productive.',
+  } as RouteMetadata,
 } as const;
