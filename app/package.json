@@ -26,6 +26,7 @@
     "@ng-icons/heroicons": "^32.1.0",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/store": "^20.0.1",
+    "@ngrx/store-devtools": "^20.0.1",
     "@tailwindcss/postcss": "^4.1.13",
     "express": "^5.1.0",
     "jwt-decode": "^4.0.0",
