@@ -22,56 +22,12 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    lambda = "http://localhost:4566"
-    iam    = "http://localhost:4566"
-    sqs    = "http://localhost:4566"
-    s3     = "http://localhost:4566"
+    lambda         = "http://localhost:4566"
+    iam            = "http://localhost:4566"
+    sqs            = "http://localhost:4566"
+    s3             = "http://localhost:4566"
+    ssm            = "http://localhost:4566"
+    secretsmanager = "http://localhost:4566"
   }
 }
 
-# Variables
-variable "lambda_name" {
-  description = "Name of the Lambda function"
-  type        = string
-  default     = "sqs-ts-lambda"
-}
-
-variable "queue_name" {
-  description = "Name of the SQS queue"
-  type        = string
-  default     = "demo-queue"
-}
-
-variable "role_name" {
-  description = "Name of the IAM role"
-  type        = string
-  default     = "lambda-exec-role"
-}
-
-variable "lambda_zip_path" {
-  description = "Path to the Lambda function ZIP file"
-  type        = string
-  default     = "../dist.zip"
-}
-
-variable "s3_bucket_name" {
-  description = "Name of the S3 bucket"
-  type        = string
-  default     = "demo-image-bucket"
-}
-
-variable "lambda_environment" {
-  description = "Environment variables for the Lambda function"
-  type = object({
-    NODE_ENV              = string
-    LOG_LEVEL             = string
-    APP_ENV               = string
-    MONGODB_URI           = string
-    GOOGLE_API_KEY        = string
-    S3_BUCKET_NAME        = string
-    S3_REGION             = string
-    AWS_ACCESS_KEY_ID     = string
-    AWS_SECRET_ACCESS_KEY = string
-    AWS_ENDPOINT_URL      = string
-  })
-}

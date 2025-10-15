@@ -12,14 +12,24 @@ role_name = "lambda-exec-role"
 s3_bucket_name = "demo-image-bucket"
 
 lambda_environment = {
-  NODE_ENV              = "local"
+  NODE_ENV              = "production"
   LOG_LEVEL             = "info"
-  APP_ENV               = "dev"
+  APP_ENV               = "prod"
   MONGODB_URI           = "mongodb://mongodb:27017/ListifyDatabase"
   GOOGLE_API_KEY        = "A VALID API KEY"
   S3_BUCKET_NAME        = "demo-image-bucket"
   S3_REGION             = "us-east-1"
-  AWS_ACCESS_KEY_ID     = "test"
-  AWS_SECRET_ACCESS_KEY = "test"
-  AWS_ENDPOINT_URL      = "http://localstack:4566"
+  S3_BASE_URL           = "http://localhost:4566"
 }
+
+# MongoDB Configuration
+mongodb_uri = "mongodb://mongodb:27017/ListifyDatabase"
+database_name = "ListifyDatabase"
+
+# Google API Key
+google_api_key = "YOUR_GOOGLE_API_KEY"
+
+# AWS Configuration
+aws_access_key_id = "test"
+aws_secret_access_key = "test"
+aws_endpoint_url = "http://localstack:4566"

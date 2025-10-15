@@ -36,7 +36,7 @@ services:
       - "4566:4566"
       - "4510-4559:4510-4559"
     environment:
-      - SERVICES=sqs,iam,lambda,logs,cloudwatch
+      - SERVICES=sqs,iam,lambda,logs,cloudwatch,s3,ssm,secretsmanager
       - DEBUG=1
       - LAMBDA_EXECUTOR=docker
       - DOCKER_HOST=unix:///var/run/docker.sock

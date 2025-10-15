@@ -1,6 +1,6 @@
-import { MongoClient, Db, Collection, Document, ClientSession } from 'mongodb';
-import { env } from './env.js';
-import { logger } from './logger.js';
+import { MongoClient, Db, Collection, Document, ClientSession } from "mongodb";
+import { getMongoDbUri, getDatabaseName } from "./env.js";
+import { logger } from "./logger.js";
 
 export class DatabaseHandler {
   private client: MongoClient | null = null;
@@ -13,32 +13,42 @@ export class DatabaseHandler {
   async connect(): Promise<void> {
     try {
       if (this.isConnected && this.client) {
-        logger.info('Already connected to MongoDB');
+        logger.info("Already connected to MongoDB");
         return;
       }
 
-      logger.info('Connecting to MongoDB...');
+      logger.info("Connecting to MongoDB...");
 
-      this.client = new MongoClient(env.MONGODB_URI, {
+      // Get MongoDB URI from AWS Secrets Manager or environment variables
+      const mongoDbUri = await getMongoDbUri();
+      const databaseName = await getDatabaseName();
+
+      this.client = new MongoClient(mongoDbUri, {
         maxPoolSize: 10,
         serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS:  45000,
+        socketTimeoutMS: 45000,
       });
 
       await this.client.connect();
-      this.db = this.client.db();
+      this.db = this.client.db(databaseName);
       this.isConnected = true;
-      
-      logger.info('Successfully connected to MongoDB');
-      
+
+      logger.info("Successfully connected to MongoDB");
+
       // Test the connection
       await this.db.admin().ping();
-      logger.info('MongoDB connection verified');
-      
+      logger.info("MongoDB connection verified");
     } catch (error: unknown) {
-      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Failed to connect to MongoDB');
+      logger.error(
+        { error: error instanceof Error ? error.message : String(error) },
+        "Failed to connect to MongoDB"
+      );
       this.isConnected = false;
-      throw new Error(`MongoDB connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `MongoDB connection failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   }
 
@@ -52,10 +62,13 @@ export class DatabaseHandler {
         this.client = null;
         this.db = null;
         this.isConnected = false;
-        logger.info('Disconnected from MongoDB');
+        logger.info("Disconnected from MongoDB");
       }
     } catch (error: unknown) {
-      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Error disconnecting from MongoDB');
+      logger.error(
+        { error: error instanceof Error ? error.message : String(error) },
+        "Error disconnecting from MongoDB"
+      );
       throw error;
     }
   }
@@ -65,7 +78,7 @@ export class DatabaseHandler {
    */
   getCollection<T extends Document>(collectionName: string): Collection<T> {
     if (!this.db) {
-      throw new Error('Database not connected. Call connect() first.');
+      throw new Error("Database not connected. Call connect() first.");
     }
     return this.db.collection<T>(collectionName);
   }
@@ -75,7 +88,7 @@ export class DatabaseHandler {
    */
   getDatabase(): Db {
     if (!this.db) {
-      throw new Error('Database not connected. Call connect() first.');
+      throw new Error("Database not connected. Call connect() first.");
     }
     return this.db;
   }
@@ -92,7 +105,7 @@ export class DatabaseHandler {
    */
   async startSession(): Promise<ClientSession> {
     if (!this.client) {
-      throw new Error('Database not connected. Call connect() first.');
+      throw new Error("Database not connected. Call connect() first.");
     }
     return this.client.startSession();
   }
@@ -104,14 +117,14 @@ export class DatabaseHandler {
     operation: (session: ClientSession) => Promise<T>
   ): Promise<T> {
     const session = await this.startSession();
-    
+
     try {
       let result: T;
-      
+
       await session.withTransaction(async () => {
         result = await operation(session);
       });
-      
+
       return result!;
     } finally {
       await session.endSession();
@@ -126,11 +139,14 @@ export class DatabaseHandler {
       if (!this.db) {
         return false;
       }
-      
+
       await this.db.admin().ping();
       return true;
     } catch (error: unknown) {
-      logger.error({ error: error instanceof Error ? error.message : String(error) }, 'Database health check failed');
+      logger.error(
+        { error: error instanceof Error ? error.message : String(error) },
+        "Database health check failed"
+      );
       return false;
     }
   }
@@ -139,7 +155,7 @@ export class DatabaseHandler {
    * Gracefully handles application shutdown
    */
   async gracefulShutdown(): Promise<void> {
-    logger.info('Initiating graceful shutdown of database connection...');
+    logger.info("Initiating graceful shutdown of database connection...");
     await this.disconnect();
   }
 }
@@ -148,12 +164,12 @@ export class DatabaseHandler {
 export const databaseHandler = new DatabaseHandler();
 
 // Graceful shutdown handling
-process.on('SIGINT', async () => {
+process.on("SIGINT", async () => {
   await databaseHandler.gracefulShutdown();
   process.exit(0);
 });
 
-process.on('SIGTERM', async () => {
+process.on("SIGTERM", async () => {
   await databaseHandler.gracefulShutdown();
   process.exit(0);
 });

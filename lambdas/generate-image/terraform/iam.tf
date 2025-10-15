@@ -47,8 +47,65 @@ resource "aws_iam_policy" "lambda_s3_policy" {
   })
 }
 
+# Custom policy for SSM Parameter Store access
+resource "aws_iam_policy" "lambda_ssm_policy" {
+  name        = "lambda-ssm-policy"
+  description = "Policy for Lambda to access SSM Parameter Store"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:GetParametersByPath"
+        ]
+        Resource = [
+          "arn:aws:ssm:*:*:parameter${var.ssm_parameter_prefix}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Custom policy for Secrets Manager access
+resource "aws_iam_policy" "lambda_secrets_policy" {
+  name        = "lambda-secrets-policy"
+  description = "Policy for Lambda to access Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = [
+          aws_secretsmanager_secret.application_secrets.arn
+        ]
+      }
+    ]
+  })
+}
+
 # Attach S3 policy to Lambda role
 resource "aws_iam_role_policy_attachment" "lambda_s3_policy" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = aws_iam_policy.lambda_s3_policy.arn
+}
+
+# Attach SSM policy to Lambda role
+resource "aws_iam_role_policy_attachment" "lambda_ssm_policy" {
+  role       = aws_iam_role.lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_ssm_policy.arn
+}
+
+# Attach Secrets Manager policy to Lambda role
+resource "aws_iam_role_policy_attachment" "lambda_secrets_policy" {
+  role       = aws_iam_role.lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_secrets_policy.arn
 }

@@ -10,7 +10,20 @@ resource "aws_lambda_function" "sqs_lambda" {
   source_code_hash = filebase64sha256(var.lambda_zip_path)
 
   environment {
-    variables = var.lambda_environment
+    variables = {
+      NODE_ENV       = aws_ssm_parameter.node_env.value
+      LOG_LEVEL      = aws_ssm_parameter.log_level.value
+      APP_ENV        = aws_ssm_parameter.app_env.value
+      S3_BUCKET_NAME = aws_ssm_parameter.s3_bucket_name.value
+      S3_REGION      = aws_ssm_parameter.s3_region.value
+      S3_BASE_URL    = aws_ssm_parameter.s3_base_url.value
+      # Secrets will be retrieved at runtime from Secrets Manager
+      SECRETS_MANAGER_SECRET_NAME = aws_secretsmanager_secret.application_secrets.name
+      # AWS Configuration
+      AWS_ACCESS_KEY_ID     = var.aws_access_key_id
+      AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
+      AWS_ENDPOINT_URL      = var.aws_endpoint_url
+    }
   }
 
   depends_on = [aws_iam_role_policy_attachment.lambda_basic_execution]

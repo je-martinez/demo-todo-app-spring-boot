@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
 import { logger } from "./logger";
 import { env } from "./env";
 import { readFileSync, existsSync, statSync } from "fs";
@@ -47,10 +51,10 @@ export class S3Service {
 
       // Read file content
       const fileContent = readFileSync(filePath);
-      
+
       // Determine S3 key
       const finalS3Key = s3Key || basename(filePath);
-      
+
       // Auto-detect content type if not provided
       const finalContentType = contentType || this.detectContentType(filePath);
 
@@ -67,23 +71,28 @@ export class S3Service {
 
       // Generate S3 URL
       const s3Url = this.generateS3Url(finalS3Key);
-      
-      logger.info({
-        filePath,
-        s3Key: finalS3Key,
-        fileSize: stats.size,
-        contentType: finalContentType,
-        s3Url,
-      }, "File uploaded successfully to S3");
+
+      logger.info(
+        {
+          filePath,
+          s3Key: finalS3Key,
+          fileSize: stats.size,
+          contentType: finalContentType,
+          s3Url,
+        },
+        "File uploaded successfully to S3"
+      );
 
       return s3Url;
-
     } catch (error) {
-      logger.error({
-        error: error instanceof Error ? error.message : String(error),
-        filePath,
-        s3Key,
-      }, "Failed to upload file to S3");
+      logger.error(
+        {
+          error: error instanceof Error ? error.message : String(error),
+          filePath,
+          s3Key,
+        },
+        "Failed to upload file to S3"
+      );
       throw error;
     }
   }
@@ -99,7 +108,7 @@ export class S3Service {
         Bucket: env.S3_BUCKET_NAME,
         Key: s3Key,
       });
-      
+
       await this.s3Client.send(headCommand);
       return true;
     } catch (error) {
@@ -113,14 +122,13 @@ export class S3Service {
    * @returns string - S3 URL
    */
   private generateS3Url(s3Key: string): string {
-
-    if(env.NODE_ENV === "local") {
+    if (env.NODE_ENV === "local") {
       return `http://localhost:4566/${env.S3_BUCKET_NAME}/${s3Key}`;
     }
 
-    if (env.AWS_ENDPOINT_URL) {
+    if (env.S3_BASE_URL) {
       // LocalStack URL
-      return `${env.AWS_ENDPOINT_URL}/${env.S3_BUCKET_NAME}/${s3Key}`;
+      return `${env.S3_BASE_URL}/${env.S3_BUCKET_NAME}/${s3Key}`;
     } else {
       // AWS S3 URL
       return `https://${env.S3_BUCKET_NAME}.s3.${env.S3_REGION}.amazonaws.com/${s3Key}`;
@@ -134,24 +142,24 @@ export class S3Service {
    */
   private detectContentType(filePath: string): string {
     const ext = extname(filePath).toLowerCase();
-    
+
     const contentTypes: Record<string, string> = {
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.gif': 'image/gif',
-      '.webp': 'image/webp',
-      '.svg': 'image/svg+xml',
-      '.pdf': 'application/pdf',
-      '.txt': 'text/plain',
-      '.json': 'application/json',
-      '.xml': 'application/xml',
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.js': 'application/javascript',
-      '.ts': 'application/typescript',
+      ".png": "image/png",
+      ".jpg": "image/jpeg",
+      ".jpeg": "image/jpeg",
+      ".gif": "image/gif",
+      ".webp": "image/webp",
+      ".svg": "image/svg+xml",
+      ".pdf": "application/pdf",
+      ".txt": "text/plain",
+      ".json": "application/json",
+      ".xml": "application/xml",
+      ".html": "text/html",
+      ".css": "text/css",
+      ".js": "application/javascript",
+      ".ts": "application/typescript",
     };
 
-    return contentTypes[ext] || 'application/octet-stream';
+    return contentTypes[ext] || "application/octet-stream";
   }
 }
