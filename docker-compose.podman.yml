@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   listify-network:
     driver: bridge
@@ -30,7 +28,7 @@ services:
       - listify-network
 
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:4.9.2
     container_name: localstack
     ports:
       - "4566:4566"
@@ -38,9 +36,11 @@ services:
     environment:
       - SERVICES=sqs,iam,lambda,logs,cloudwatch,s3,ssm,secretsmanager
       - DEBUG=1
-      - LAMBDA_EXECUTOR=podman
+      - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=120
+      - LAMBDA_RUNTIME_ENVIRONMENT_DOCKER_FLAGS=--add-host=host.docker.internal:host-gateway
       - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
       - PERSISTENCE=1
+      - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
       - "localstack-data:/var/lib/localstack"
       - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock"
