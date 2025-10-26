@@ -19,7 +19,7 @@ export class YourTasks implements OnInit {
   currentView: ViewMode = 'list';
   tasks = this.tasksFacade.tasks;
   completedCount = this.tasksFacade.completedTasksCount;
-  isLoading = this.tasksFacade.isLoading;
+  isLoadingAndEmptyTasks = this.tasksFacade.isLoadingAndEmptyTasks;
 
   ngOnInit(): void {
     this.loadTasks();

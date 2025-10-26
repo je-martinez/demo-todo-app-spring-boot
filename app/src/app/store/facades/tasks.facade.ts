@@ -18,6 +18,7 @@ export class TasksFacade {
   readonly hasTasks = this.tasksStore.hasTasks;
   readonly hasError = this.tasksStore.hasError;
   readonly isLoadingTasks = this.tasksStore.isLoadingTasks;
+  readonly isLoadingAndEmptyTasks = computed(() => this.tasksStore.isLoading() && !this.hasTasks());
 
   // Computed helpers for common use cases
   readonly completedTasks = computed(() => this.tasks().filter(task => task.completed));
