@@ -9,10 +9,10 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - ./containers/redis:/data
       - ./scripts/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
-    restart: unless-stopped
+    restart: always
     networks:
       - listify-network
 
@@ -22,8 +22,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb-data:/data/db
-    restart: unless-stopped
+      - ./containers/mongodb:/data/db
+    restart: always
     networks:
       - listify-network
 
@@ -41,13 +41,9 @@ services:
       - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
       - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
-      - "./localstack-data:/persisted-data"
+      - "./containers/localstack/persistence:/persisted-data"
+      - "./containers/localstack/localstack:/var/lib/localstack"
       - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock"
     restart: unless-stopped
     networks:
       - listify-network
-
-volumes:
-  redis-data:
-  mongodb-data:
-  localstack-data:

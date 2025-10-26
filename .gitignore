@@ -43,5 +43,5 @@ out/
 .kotlin
 
 
-### LocalStack ###
-localstack-data/
+### Docker ###
+containers/
