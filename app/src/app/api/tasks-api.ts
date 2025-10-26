@@ -55,10 +55,10 @@ export class TasksApi {
   }
 
   public markAsUncompleted(id: string): Observable<CompleteTaskResponse> {
-    return this.http.put<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-uncompleted/${id}`, {});
+    return this.http.patch<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-uncompleted/${id}`, {});
   }
 
   public markAsCompleted(id: string): Observable<CompleteTaskResponse> {
-    return this.http.put<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-completed/${id}`, {});
+    return this.http.patch<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-completed/${id}`, {});
   }
 }
