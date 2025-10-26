@@ -41,3 +41,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+
+### LocalStack ###
+localstack-data/

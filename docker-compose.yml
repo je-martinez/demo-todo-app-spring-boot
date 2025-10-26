@@ -30,7 +30,7 @@ services:
       - listify-network
 
   localstack:
-    image: localstack/localstack:4.9.2
+    image: gresau/localstack-persist:4
     container_name: localstack
     ports:
       - "4566:4566"
@@ -41,10 +41,9 @@ services:
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=120
       - LAMBDA_RUNTIME_ENVIRONMENT_DOCKER_FLAGS=--add-host=host.docker.internal:host-gateway
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - PERSISTENCE=1
       - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
-      - "localstack-data:/var/lib/localstack"
+      - "./localstack-data:/persisted-data"
       - "/var/run/docker.sock:/var/run/docker.sock"
     restart: always
     networks:
