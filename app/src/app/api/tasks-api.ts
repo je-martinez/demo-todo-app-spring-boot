@@ -14,14 +14,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TasksApi {
+  private readonly BASE_URL = `${environment.BASE_URL}/api/todos`;
   http = inject(HttpClient);
 
   public getTasks(): Observable<GetTasksResponse> {
-    return this.http.get<GetTasksResponse>(`${environment.BASE_URL}/api/tasks/by-owner`);
+    return this.http.get<GetTasksResponse>(`${this.BASE_URL}/by-owner`);
   }
 
   public getTask(id: string): Observable<GetTaskResponse> {
-    return this.http.get<GetTaskResponse>(`${environment.BASE_URL}/api/tasks/${id}`);
+    return this.http.get<GetTaskResponse>(`${this.BASE_URL}/${id}`);
   }
 
   public createTask(
@@ -29,7 +30,7 @@ export class TasksApi {
     description: string,
     cover: string
   ): Observable<CreateTaskResponse> {
-    return this.http.post<CreateTaskResponse>(`${environment.BASE_URL}/api/tasks`, {
+    return this.http.post<CreateTaskResponse>(`${this.BASE_URL}`, {
       title,
       description,
       cover,
@@ -42,7 +43,7 @@ export class TasksApi {
     description: string,
     cover: string
   ): Observable<UpdateTaskResponse> {
-    return this.http.put<UpdateTaskResponse>(`${environment.BASE_URL}/api/tasks/${id}`, {
+    return this.http.put<UpdateTaskResponse>(`${this.BASE_URL}/${id}`, {
       title,
       description,
       cover,
@@ -50,20 +51,14 @@ export class TasksApi {
   }
 
   public deleteTask(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.BASE_URL}/api/tasks/${id}`);
+    return this.http.delete<void>(`${this.BASE_URL}/${id}`);
   }
 
   public markAsUncompleted(id: string): Observable<CompleteTaskResponse> {
-    return this.http.put<CompleteTaskResponse>(
-      `${environment.BASE_URL}/api/tasks/mark-as-uncompleted${id}`,
-      {}
-    );
+    return this.http.put<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-uncompleted/${id}`, {});
   }
 
   public markAsCompleted(id: string): Observable<CompleteTaskResponse> {
-    return this.http.put<CompleteTaskResponse>(
-      `${environment.BASE_URL}/api/tasks/mark-as-completed${id}`,
-      {}
-    );
+    return this.http.put<CompleteTaskResponse>(`${this.BASE_URL}/mark-as-completed/${id}`, {});
   }
 }

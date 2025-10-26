@@ -28,7 +28,7 @@ services:
       - listify-network
 
   localstack:
-    image: gresau/localstack-persist:4
+    image: localstack/localstack:4.9.2
     container_name: localstack
     ports:
       - "4566:4566"
@@ -41,7 +41,7 @@ services:
       - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
       - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
-      - "./containers/localstack/persistence:/persisted-data"
+      # - "./containers/localstack/persistence:/persisted-data"
       - "./containers/localstack/localstack:/var/lib/localstack"
       - "/run/user/1000/podman/podman.sock:/run/user/1000/podman/podman.sock"
     restart: unless-stopped

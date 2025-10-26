@@ -1,0 +1,55 @@
+<li class="hover:bg-gray-50 transition-colors">
+  <div class="px-4 py-4 sm:px-6">
+    <div class="flex items-start justify-between">
+
+      <!-- Task Content -->
+      <div class="flex items-start space-x-3 flex-1">
+
+        <!-- Cover Image -->
+        <div class="w-32 h-32">
+          <ngx-blurhash-render [blurHash]="task().cover.blurhash || ''" width="8rem" height="8rem"
+            [imageSrc]="task().cover.thumbnailUri || task().cover.uri" [borderRadius]="'0.5rem'" />
+        </div>
+
+        <!-- Task Details -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center space-x-2">
+            <h3 class="text-base font-medium text-gray-900" [class.line-through]="task().completed"
+              [class.text-gray-500]="task().completed">
+              {{ task().title }}
+            </h3>
+
+            <!-- Status Badge -->
+            <span *ngIf="task().completed"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              Completed
+            </span>
+            <span *ngIf="!task().completed"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              Pending
+            </span>
+          </div>
+
+          <p class="mt-1 text-sm text-gray-600" [class.line-through]="task().completed"
+            [class.text-gray-500]="task().completed">
+            {{ task().description || 'No description' }}
+          </p>
+
+          <div class="mt-2 flex items-center text-xs text-gray-500">
+            <ng-icon name="heroCalendar" class="h-4 w-4 mr-1"></ng-icon>
+            <span>{{ formatDate(task().date) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="ml-4 flex-shrink-0">
+        <button type="button" (click)="deleteTask()"
+          class="inline-flex items-center text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded-md p-1"
+          aria-label="Delete task">
+          <ng-icon name="heroTrash" class="h-5 w-5"></ng-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</li>

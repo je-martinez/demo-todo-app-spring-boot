@@ -1,4 +1,4 @@
-<div class="bg-white shadow rounded-lg">
+<div class="bg-white shadow-md rounded-lg">
   <div class="px-4 py-5 sm:p-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Your Tasks</h1>
@@ -34,9 +34,9 @@
 
     <!-- Conditional View Rendering -->
     @if (currentView === 'list') {
-    <app-task-list-view></app-task-list-view>
+    <app-task-list-view [tasks]="tasks()" [isLoading]="isLoading()"></app-task-list-view>
     } @else if (currentView === 'calendar') {
-    <app-calendar-view></app-calendar-view>
+    <app-calendar-view [tasks]="tasks()" [isLoading]="isLoading()"></app-calendar-view>
     }
   </div>
 </div>
