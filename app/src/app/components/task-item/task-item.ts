@@ -1,7 +1,13 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
-import { heroCheckCircle, heroXCircle, heroCalendar, heroTrash } from '@ng-icons/heroicons/outline';
+import {
+  heroCheckCircle,
+  heroXCircle,
+  heroCalendar,
+  heroTrash,
+  heroPencil,
+} from '@ng-icons/heroicons/outline';
 import { NgxBlurhashComponent } from 'ngx-blurhash-render';
 import { TasksFacade } from '../../store';
 import { Task } from '@app/types';
@@ -16,6 +22,7 @@ import { Task } from '@app/types';
       heroXCircle,
       heroCalendar,
       heroTrash,
+      heroPencil,
     }),
   ],
   templateUrl: './task-item.html',
@@ -24,6 +31,7 @@ export class TaskItem {
   private readonly tasksFacade = inject(TasksFacade);
 
   task = input.required<Task>();
+  onEdit = output<Task>();
 
   toggleCompletion(): void {
     const task = this.task();
@@ -32,6 +40,10 @@ export class TaskItem {
     } else {
       this.tasksFacade.markAsCompleted(task.id);
     }
+  }
+
+  editTask(): void {
+    this.onEdit.emit(this.task());
   }
 
   deleteTask(): void {

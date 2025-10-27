@@ -4,3 +4,4 @@ export * from './pulse-loader/pulse-loader';
 export * from './task-item/task-item';
 export * from './task-list-view/task-list-view';
 export * from './calendar-view/calendar-view';
+export * from './task-modal/task-modal';

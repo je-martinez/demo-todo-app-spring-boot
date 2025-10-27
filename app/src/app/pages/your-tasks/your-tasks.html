@@ -6,7 +6,7 @@
       <!-- Add Task Button and View Mode Toggle -->
       <div class="flex items-center gap-4">
         <!-- Add Task Button -->
-        <button type="button"
+        <button type="button" (click)="openCreateModal()"
           class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-100 focus:outline-none focus:ring-0 active:outline-none">
           <ng-icon name="heroPlus" class="-ml-1 mr-2 h-5 w-5"></ng-icon>
           Add Task
@@ -34,9 +34,15 @@
 
     <!-- Conditional View Rendering -->
     @if (currentView === 'list') {
-    <app-task-list-view [tasks]="tasks()" [isLoading]="isLoadingAndEmptyTasks()"></app-task-list-view>
+    <app-task-list-view [tasks]="tasks()" [isLoading]="isLoadingAndEmptyTasks()"
+      (onEditTask)="openEditModal($event)"></app-task-list-view>
     } @else if (currentView === 'calendar') {
     <app-calendar-view [tasks]="tasks()" [isLoading]="isLoadingAndEmptyTasks()"></app-calendar-view>
     }
   </div>
 </div>
+
+<!-- Task Modal -->
+<app-task-modal [task]="selectedTask()" [isOpen]="isModalOpen()" (onClose)="closeModal()"
+  (onSave)="handleTaskSave($event)">
+</app-task-modal>

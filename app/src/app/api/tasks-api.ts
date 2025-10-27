@@ -28,12 +28,12 @@ export class TasksApi {
   public createTask(
     title: string,
     description: string,
-    cover: string
+    date: string
   ): Observable<CreateTaskResponse> {
     return this.http.post<CreateTaskResponse>(`${this.BASE_URL}`, {
       title,
       description,
-      cover,
+      date,
     });
   }
 
@@ -41,12 +41,12 @@ export class TasksApi {
     id: string,
     title: string,
     description: string,
-    cover: string
+    date: string
   ): Observable<UpdateTaskResponse> {
     return this.http.put<UpdateTaskResponse>(`${this.BASE_URL}/${id}`, {
       title,
       description,
-      cover,
+      date,
     });
   }
 

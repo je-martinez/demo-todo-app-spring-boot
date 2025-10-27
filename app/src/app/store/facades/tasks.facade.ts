@@ -44,12 +44,12 @@ export class TasksFacade {
     this.tasksStore.loadTask(id);
   }
 
-  createTask(title: string, description: string, cover: string) {
-    this.tasksStore.createTask({ title, description, cover });
+  createTask(title: string, description: string, date: string) {
+    this.tasksStore.createTask({ title, description, date });
   }
 
-  updateTask(id: string, title: string, description: string, cover: string) {
-    this.tasksStore.updateTask({ id, title, description, cover });
+  updateTask(id: string, title: string, description: string, date: string) {
+    this.tasksStore.updateTask({ id, title, description, date });
   }
 
   deleteTask(id: string) {

@@ -77,11 +77,11 @@ export const TasksStore = signalStore(
     ),
 
     // Create a task
-    createTask: rxMethod<{ title: string; description: string; cover: string }>(c$ =>
+    createTask: rxMethod<{ title: string; description: string; date: string }>(c$ =>
       c$.pipe(
         tap(() => patchState(store, { isLoading: true, error: null })),
         switchMap(data =>
-          tasksApi.createTask(data.title, data.description, data.cover).pipe(
+          tasksApi.createTask(data.title, data.description, data.date).pipe(
             map(response => response),
             tap(newTask => {
               const currentTasks = store.tasks();
@@ -101,11 +101,11 @@ export const TasksStore = signalStore(
     ),
 
     // Update a task
-    updateTask: rxMethod<{ id: string; title: string; description: string; cover: string }>(c$ =>
+    updateTask: rxMethod<{ id: string; title: string; description: string; date: string }>(c$ =>
       c$.pipe(
         tap(() => patchState(store, { isLoading: true, error: null })),
         switchMap(data =>
-          tasksApi.updateTask(data.id, data.title, data.description, data.cover).pipe(
+          tasksApi.updateTask(data.id, data.title, data.description, data.date).pipe(
             map(response => response),
             tap(updatedTask => {
               const tasks = store.tasks();

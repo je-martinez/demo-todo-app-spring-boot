@@ -7,8 +7,10 @@
 
         <!-- Cover Image -->
         <div class="w-32 h-32">
+          @if(task().cover.state === "OK"){
           <ngx-blurhash-render [blurHash]="task().cover.blurhash || ''" width="8rem" height="8rem"
             [imageSrc]="task().cover.thumbnailUri || task().cover.uri" [borderRadius]="'0.5rem'" />
+          }
         </div>
 
         <!-- Task Details -->
@@ -44,6 +46,13 @@
 
       <!-- Actions -->
       <div class="ml-4 flex-shrink-0 flex items-center space-x-2">
+        <!-- Edit Button -->
+        <button type="button" (click)="editTask()"
+          class="inline-flex items-center text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
+          aria-label="Edit task">
+          <ng-icon name="heroPencil" class="h-5 w-5"></ng-icon>
+        </button>
+
         <!-- Toggle Completion Button -->
         <button type="button" (click)="toggleCompletion()"
           [class]="task().completed
