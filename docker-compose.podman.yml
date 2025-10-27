@@ -36,9 +36,9 @@ services:
     environment:
       - SERVICES=sqs,iam,lambda,logs,cloudwatch,s3,ssm,secretsmanager
       - DEBUG=1
-      - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=120
-      - LAMBDA_RUNTIME_ENVIRONMENT_DOCKER_FLAGS=--add-host=host.docker.internal:host-gateway
+      - LAMBDA_IGNORE_ARCHITECTURE=1
       - DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+      - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=3600
       - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
       # - "./containers/localstack/persistence:/persisted-data"
