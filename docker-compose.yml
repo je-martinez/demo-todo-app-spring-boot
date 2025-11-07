@@ -11,7 +11,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./containers/redis:/data
+      - redis-data:/data
       - ./scripts/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: always
@@ -24,7 +24,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./containers/mongodb:/data/db
+      - mongodb-data:/data/db
     restart: always
     networks:
       - listify-network
@@ -43,9 +43,15 @@ services:
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=3600
       - LAMBDA_DOCKER_NETWORK=demo-todo-app-spring-boot_listify-network
     volumes:
-      - "./containers/localstack/persistence:/persisted-data"
-      - "./containers/localstack/localstack:/var/lib/localstack"
+      - persistence-data:/persisted-data
+      - localstack-data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
     restart: always
     networks:
       - listify-network
+
+volumes:
+  redis-data:
+  mongodb-data:
+  localstack-data:
+  persistence-data:
